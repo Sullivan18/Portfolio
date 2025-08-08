@@ -1072,11 +1072,11 @@ export default function Home() {
       </section>
 
       {/* Experience Section */}
-      <section id="experience" className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
+      <section id="experience" className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
         <div className="max-w-6xl mx-auto">
           <AnimatedText 
             text="Experiência Profissional"
-            className="text-3xl font-bold text-center text-slate-900 dark:text-white mb-12"
+            className="text-2xl sm:text-3xl font-bold text-center text-slate-900 dark:text-white mb-8 sm:mb-12"
           />
           
           <motion.div 
@@ -1094,13 +1094,13 @@ export default function Home() {
               viewport={{ once: true }}
               transition={{ duration: 1.5 }}
             >
-                              {/* SVG Path for Zigzag */}
+              {/* SVG Path for Zigzag */}
               <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
                 {/* Background Path (invisible) */}
                 <path
                   d="M 20 20 L 35 20 L 50 35 L 65 20 L 80 35 L 65 50 L 80 60 L 50 80 L 20 85"
                   stroke="transparent"
-                  strokeWidth="2"
+                  strokeWidth="1.5"
                   fill="none"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -1110,7 +1110,7 @@ export default function Home() {
                 <motion.path
                   d="M 20 20 L 35 20 L 50 35 L 65 20 L 80 35 L 65 50 L 80 60 L 50 80 L 20 85"
                   stroke="url(#zigzagGradient)"
-                  strokeWidth="3"
+                  strokeWidth="2"
                   fill="none"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -1126,7 +1126,7 @@ export default function Home() {
                 {/* Animated Dot that follows the path */}
                 {isClient && (
                   <motion.div
-                    className="absolute w-3 h-3 bg-gradient-to-r from-white to-blue-500 rounded-full shadow-lg"
+                    className="absolute w-2.5 h-2.5 sm:w-3 sm:h-3 bg-gradient-to-r from-white to-blue-500 rounded-full shadow-lg"
                     style={{
                       left: "20%",
                       top: "20%",
@@ -1164,7 +1164,7 @@ export default function Home() {
             <div className="relative">
               {/* Inoutbox Experience - Left Side (Past) */}
               <motion.div 
-                className="relative mb-16 flex justify-start"
+                className="relative mb-12 sm:mb-16 flex justify-start"
                 initial={{ opacity: 0, x: -100 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
@@ -1172,7 +1172,7 @@ export default function Home() {
               >
                 {/* Timeline Dot */}
                 <motion.div 
-                  className="absolute left-1/4 top-8 w-4 h-4 bg-gradient-to-r from-purple-500 to-pink-600 rounded-full border-4 border-white dark:border-slate-800 shadow-lg"
+                  className="absolute left-1/4 top-6 sm:top-8 w-3 h-3 sm:w-4 sm:h-4 bg-gradient-to-r from-purple-500 to-pink-600 rounded-full border-2 sm:border-4 border-white dark:border-slate-800 shadow-lg"
                   initial={{ scale: 0 }}
                   whileInView={{ scale: 1 }}
                   viewport={{ once: true }}
@@ -1182,7 +1182,7 @@ export default function Home() {
 
                 {/* Experience Card */}
                 <motion.div 
-                  className="w-full max-w-md bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-6 relative overflow-hidden group"
+                  className="w-full max-w-sm sm:max-w-md bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl shadow-xl p-4 sm:p-6 relative overflow-hidden group"
                   variants={cardVariants}
                   whileHover="hover"
                   whileTap="tap"
@@ -1196,17 +1196,17 @@ export default function Home() {
 
                                     {/* Company Logo Placeholder */}
                   <motion.div 
-                    className="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-600 rounded-xl flex items-center justify-center mb-4 relative z-10"
+                    className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r from-purple-500 to-pink-600 rounded-lg sm:rounded-xl flex items-center justify-center mb-3 sm:mb-4 relative z-10"
                     whileHover={{ scale: 1.1, rotate: 5 }}
                     transition={{ duration: 0.3 }}
                   >
-                    <span className="text-white font-bold text-lg">I</span>
+                    <span className="text-white font-bold text-base sm:text-lg">I</span>
                   </motion.div>
 
                   {/* Content */}
                   <div className="relative z-10">
                     <motion.h3 
-                      className="text-xl font-bold text-slate-900 dark:text-white mb-2"
+                      className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-2"
                       whileHover={{ color: "#9333ea" }}
                     >
                       Desenvolvedor Web
@@ -1218,18 +1218,18 @@ export default function Home() {
                       Inoutbox Games
                     </motion.p>
                     <motion.p 
-                      className="text-slate-600 dark:text-slate-400 text-sm mb-3"
+                      className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm mb-2 sm:mb-3"
                       whileHover={{ color: "#475569" }}
                     >
                       nov de 2023 - out de 2024 · 1 ano
                     </motion.p>
                     <motion.p 
-                      className="text-slate-600 dark:text-slate-400 text-sm mb-3"
+                      className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm mb-2 sm:mb-3"
                       whileHover={{ color: "#475569" }}
                     >
                       Sorocaba, São Paulo, Brasil · Remota
                     </motion.p>
-                    <p className="text-slate-700 dark:text-slate-300 leading-relaxed">
+                    <p className="text-slate-700 dark:text-slate-300 leading-relaxed text-sm sm:text-base">
                       Atuei no desenvolvimento de websites para uma empresa de jogos, focando na integração das 
                       funcionalidades de interação com o mapa do jogo utilizando React, React-Leaflet e ReactModal. 
                       Fui responsável pela personalização de estilos CSS, implementação de recaptcha para segurança 
@@ -1238,7 +1238,7 @@ export default function Home() {
 
                     {/* Skills Tags */}
                     <motion.div 
-                      className="flex flex-wrap gap-2 mt-4"
+                      className="flex flex-wrap gap-1.5 sm:gap-2 mt-3 sm:mt-4"
                       initial={{ opacity: 0 }}
                       whileInView={{ opacity: 1 }}
                       viewport={{ once: true }}
@@ -1247,7 +1247,7 @@ export default function Home() {
                       {["React", "JavaScript", "React-Leaflet", "ReactModal", "CSS", "Google Analytics", "Recaptcha"].map((skill, index) => (
                         <motion.span
                           key={index}
-                          className="px-3 py-1 bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 text-xs rounded-full"
+                          className="px-2 sm:px-3 py-0.5 sm:py-1 bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 text-xs rounded-full"
                           initial={{ opacity: 0, scale: 0.8 }}
                           whileInView={{ opacity: 1, scale: 1 }}
                           viewport={{ once: true }}
@@ -1281,7 +1281,7 @@ export default function Home() {
               >
                 {/* Timeline Dot */}
                 <motion.div 
-                  className="absolute right-1/4 top-8 w-4 h-4 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full border-4 border-white dark:border-slate-800 shadow-lg"
+                  className="absolute right-1/4 top-6 sm:top-8 w-3 h-3 sm:w-4 sm:h-4 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full border-2 sm:border-4 border-white dark:border-slate-800 shadow-lg"
                   initial={{ scale: 0 }}
                   whileInView={{ scale: 1 }}
                   viewport={{ once: true }}
@@ -1291,7 +1291,7 @@ export default function Home() {
 
                 {/* Experience Card */}
                 <motion.div 
-                  className="w-full max-w-md bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-6 relative overflow-hidden group"
+                  className="w-full max-w-sm sm:max-w-md bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl shadow-xl p-4 sm:p-6 relative overflow-hidden group"
                   variants={cardVariants}
                   whileHover="hover"
                   whileTap="tap"
@@ -1305,17 +1305,17 @@ export default function Home() {
 
                                     {/* Company Logo Placeholder */}
                   <motion.div 
-                    className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center mb-4 relative z-10"
+                    className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg sm:rounded-xl flex items-center justify-center mb-3 sm:mb-4 relative z-10"
                     whileHover={{ scale: 1.1, rotate: -5 }}
                     transition={{ duration: 0.3 }}
                   >
-                    <span className="text-white font-bold text-lg">L</span>
+                    <span className="text-white font-bold text-base sm:text-lg">L</span>
                   </motion.div>
 
                   {/* Content */}
                   <div className="relative z-10">
                     <motion.h3 
-                      className="text-xl font-bold text-slate-900 dark:text-white mb-2"
+                      className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-2"
                       whileHover={{ color: "#3b82f6" }}
                     >
                       Desenvolvedor Full Stack
@@ -1327,18 +1327,18 @@ export default function Home() {
                       Ludare Consultoria
                     </motion.p>
                     <motion.p 
-                      className="text-slate-600 dark:text-slate-400 text-sm mb-3"
+                      className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm mb-2 sm:mb-3"
                       whileHover={{ color: "#475569" }}
                     >
                       out de 2024 - o momento · 11 meses
                     </motion.p>
                     <motion.p 
-                      className="text-slate-600 dark:text-slate-400 text-sm mb-3"
+                      className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm mb-2 sm:mb-3"
                       whileHover={{ color: "#475569" }}
                     >
                       Araçoiaba da Serra, São Paulo, Brasil · Presencial
                     </motion.p>
-                    <p className="text-slate-700 dark:text-slate-300 leading-relaxed">
+                    <p className="text-slate-700 dark:text-slate-300 leading-relaxed text-sm sm:text-base">
                       Ludare é uma rede social desenvolvida com React Native, TypeScript, C# e .NET. 
                       Responsável pelo ciclo completo de desenvolvimento, incluindo implementação de funcionalidades, 
                       otimização de performance e integração de sistemas. Atuo na modelagem de dados, manutenção de APIs 
@@ -1347,7 +1347,7 @@ export default function Home() {
 
                     {/* Skills Tags */}
                     <motion.div 
-                      className="flex flex-wrap gap-2 mt-4"
+                      className="flex flex-wrap gap-1.5 sm:gap-2 mt-3 sm:mt-4"
                       initial={{ opacity: 0 }}
                       whileInView={{ opacity: 1 }}
                       viewport={{ once: true }}
@@ -1356,7 +1356,7 @@ export default function Home() {
                       {["React Native", "TypeScript", "C#", ".NET", "SQL Server", "APIs", "Performance"].map((skill, index) => (
                         <motion.span
                           key={index}
-                          className="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs rounded-full"
+                          className="px-2 sm:px-3 py-0.5 sm:py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs rounded-full"
                           initial={{ opacity: 0, scale: 0.8 }}
                           whileInView={{ opacity: 1, scale: 1 }}
                           viewport={{ once: true }}
@@ -1383,7 +1383,7 @@ export default function Home() {
 
               {/* Future Section - Em Breve */}
               <motion.div 
-                className="relative flex justify-start mt-16"
+                className="relative flex justify-start mt-12 sm:mt-16"
                 initial={{ opacity: 0, y: 50 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -1391,7 +1391,7 @@ export default function Home() {
               >
                 {/* Timeline Dot */}
                 <motion.div 
-                  className="absolute left-1/4 top-8 w-4 h-4 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full border-4 border-white dark:border-slate-800 shadow-lg"
+                  className="absolute left-1/4 top-6 sm:top-8 w-3 h-3 sm:w-4 sm:h-4 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full border-2 sm:border-4 border-white dark:border-slate-800 shadow-lg"
                   initial={{ scale: 0 }}
                   whileInView={{ scale: 1 }}
                   viewport={{ once: true }}
@@ -1401,7 +1401,7 @@ export default function Home() {
 
                 {/* Future Card */}
                 <motion.div 
-                  className="w-full max-w-md bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-6 relative overflow-hidden group border-2 border-green-200 dark:border-green-800"
+                  className="w-full max-w-sm sm:max-w-md bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl shadow-xl p-4 sm:p-6 relative overflow-hidden group border-2 border-green-200 dark:border-green-800"
                   variants={cardVariants}
                   whileHover="hover"
                   whileTap="tap"
@@ -1415,17 +1415,17 @@ export default function Home() {
 
                   {/* Future Icon */}
                   <motion.div 
-                    className="w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl flex items-center justify-center mb-4 relative z-10"
+                    className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r from-green-500 to-emerald-600 rounded-lg sm:rounded-xl flex items-center justify-center mb-3 sm:mb-4 relative z-10"
                     whileHover={{ scale: 1.1, rotate: 5 }}
                     transition={{ duration: 0.3 }}
                   >
-                    <span className="text-white font-bold text-lg">🚀</span>
+                    <span className="text-white font-bold text-base sm:text-lg">🚀</span>
                   </motion.div>
 
                   {/* Content */}
                   <div className="relative z-10">
                     <motion.h3 
-                      className="text-xl font-bold text-slate-900 dark:text-white mb-2"
+                      className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-2"
                       whileHover={{ color: "#059669" }}
                     >
                       Em Breve...
@@ -1437,25 +1437,25 @@ export default function Home() {
                       Próximos Desafios
                     </motion.p>
                     <motion.p 
-                      className="text-slate-600 dark:text-slate-400 text-sm mb-3"
+                      className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm mb-2 sm:mb-3"
                       whileHover={{ color: "#475569" }}
                     >
                       Sempre em evolução
                     </motion.p>
                     <motion.p 
-                      className="text-slate-600 dark:text-slate-400 text-sm mb-3"
+                      className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm mb-2 sm:mb-3"
                       whileHover={{ color: "#475569" }}
                     >
                       Buscando novas oportunidades
                     </motion.p>
-                    <p className="text-slate-700 dark:text-slate-300 leading-relaxed">
+                    <p className="text-slate-700 dark:text-slate-300 leading-relaxed text-sm sm:text-base">
                       Continuo aprimorando minhas habilidades e explorando novas tecnologias. 
                       Sempre aberto a novos desafios e oportunidades de crescimento profissional.
                     </p>
 
                     {/* Skills Tags */}
                     <motion.div 
-                      className="flex flex-wrap gap-2 mt-4"
+                      className="flex flex-wrap gap-1.5 sm:gap-2 mt-3 sm:mt-4"
                       initial={{ opacity: 0 }}
                       whileInView={{ opacity: 1 }}
                       viewport={{ once: true }}
@@ -1464,7 +1464,7 @@ export default function Home() {
                       {["Aprendizado Contínuo", "Novas Tecnologias", "Desafios", "Crescimento"].map((skill, index) => (
                         <motion.span
                           key={index}
-                          className="px-3 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 text-xs rounded-full"
+                          className="px-2 sm:px-3 py-0.5 sm:py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 text-xs rounded-full"
                           initial={{ opacity: 0, scale: 0.8 }}
                           whileInView={{ opacity: 1, scale: 1 }}
                           viewport={{ once: true }}
