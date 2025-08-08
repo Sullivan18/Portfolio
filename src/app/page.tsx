@@ -383,7 +383,6 @@ export default function Home() {
   const [selectedSkill, setSelectedSkill] = useState<Skill | null>(null);
   const [isSkillModalOpen, setIsSkillModalOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const skillModalRef = useRef<HTMLDivElement>(null);
@@ -393,17 +392,6 @@ export default function Home() {
     setIsClient(true);
     // Força a página a voltar ao topo quando carregada/atualizada
     window.scrollTo(0, 0);
-  }, []);
-
-  // Detectar viewport mobile para ajustar animações pesadas
-  useEffect(() => {
-    const checkIsMobile = () => {
-      if (typeof window === 'undefined') return;
-      setIsMobile(window.matchMedia('(max-width: 640px)').matches);
-    };
-    checkIsMobile();
-    window.addEventListener('resize', checkIsMobile);
-    return () => window.removeEventListener('resize', checkIsMobile);
   }, []);
 
   const projects: Project[] = [
@@ -651,81 +639,48 @@ export default function Home() {
     }
   };
 
-  // Transição compartilhada mais fluida para animações de layout (cards -> modal)
-  const sharedLayoutTransition = {
-    layout: { type: 'spring', stiffness: 260, damping: 30 }
-  } as const;
-
   // Variantes do modal
   const modalVariants = {
     hidden: {
       opacity: 0,
-      scale: 0.98,
-      y: 12
+      scale: 0.8,
+      y: 50
     },
     visible: {
       opacity: 1,
       scale: 1,
       y: 0,
       transition: {
-        type: 'spring' as const,
-        stiffness: 220,
-        damping: 26
+        duration: 0.4,
+        ease: "easeOut" as const
       }
     },
     exit: {
       opacity: 0,
-      scale: 0.98,
-      y: 8,
+      scale: 0.8,
+      y: 50,
       transition: {
-        type: 'spring' as const,
-        stiffness: 240,
-        damping: 30
+        duration: 0.3,
+        ease: "easeIn" as const
       }
     }
   };
-
-  // Variantes mais leves para mobile (sem springs pesados)
-  const modalVariantsMobile = {
-    hidden: { opacity: 0, y: 24, scale: 1 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: { duration: 0.22, ease: "easeOut" as const }
-    },
-    exit: {
-      opacity: 0,
-      y: 16,
-      scale: 1,
-      transition: { duration: 0.18, ease: "easeIn" as const }
-    }
-  } as const;
 
   const backdropVariants = {
     hidden: { opacity: 0 },
     visible: { 
       opacity: 1,
       transition: {
-        duration: 0.35,
-        ease: "easeOut" as const
+        duration: 0.3
       }
     },
     exit: { 
       opacity: 0,
       transition: {
-        duration: 0.25,
-        ease: "easeIn" as const
+        duration: 0.2
       }
     }
   };
-
-  // Backdrop mais leve no mobile
-  const backdropVariantsMobile = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { duration: 0.2, ease: "easeOut" as const } },
-    exit: { opacity: 0, transition: { duration: 0.15, ease: "easeIn" as const } }
-  } as const;
 
   // Função para abrir modal
   const openModal = (project: Project) => {
@@ -740,6 +695,7 @@ export default function Home() {
   // Função para fechar modal
   const closeModal = () => {
     setIsModalOpen(false);
+    setTimeout(() => setSelectedProject(null), 300);
   };
 
   // Funções para abrir/fechar modal de Skill
@@ -1154,7 +1110,7 @@ export default function Home() {
 
       {/* Projects Section */}
       <section id="projects" className="py-16 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-        {/* Fundo animado: Rede neural em SVG */}
+        {/* Fundo animado: Constelação em SVG */}
         {isClient && (
           <motion.svg
             className="absolute inset-0 w-full h-full text-slate-400/40 dark:text-slate-300/30"
@@ -1203,74 +1159,75 @@ export default function Home() {
 
               return (
                 <>
-                  {/* Conexões (axônios/dendritos) */}
+                  {/* Conexões */}
                   {lines.map(([a, b], idx) => (
-                    <g key={`g-${idx}`}>
-                      {/* Linha base sutil */}
-                      <motion.line
-                        x1={nodes[a].x}
-                        y1={nodes[a].y}
-                        x2={nodes[b].x}
-                        y2={nodes[b].y}
-                        stroke="currentColor"
-                        strokeWidth={0.6}
-                        strokeLinecap="round"
-                        initial={{ opacity: 0 }}
-                        whileInView={{ opacity: 0.35 }}
-                        viewport={{ once: true }}
-                        animate={{ opacity: [0.2, 0.45, 0.2] }}
-                        transition={{ duration: 3.6 + (idx % 7) * 0.2, repeat: Infinity, ease: "easeInOut", delay: (idx % 5) * 0.3 }}
-                      />
-                      {/* Overlay tracejado que corre para simular sinal sináptico */}
-                      <motion.line
-                        x1={nodes[a].x}
-                        y1={nodes[a].y}
-                        x2={nodes[b].x}
-                        y2={nodes[b].y}
-                        stroke="currentColor"
-                        strokeWidth={1.0}
-                        strokeLinecap="round"
-                        strokeDasharray="12 18"
-                        initial={{ opacity: 0, strokeDashoffset: 0 }}
-                        whileInView={{ opacity: 0.6 }}
-                        viewport={{ once: true }}
-                        animate={{ strokeDashoffset: [-200, 0, -200] }}
-                        transition={{ duration: 5 + (idx % 5), repeat: Infinity, ease: "linear", delay: (idx % 7) * 0.2 }}
-                      />
-                    </g>
+                    <motion.line
+                      key={`l-${idx}`}
+                      x1={nodes[a].x}
+                      y1={nodes[a].y}
+                      x2={nodes[b].x}
+                      y2={nodes[b].y}
+                      stroke="currentColor"
+                      strokeWidth={0.6}
+                      initial={{ opacity: 0 }}
+                      whileInView={{ opacity: 0.45 }}
+                      viewport={{ once: true }}
+                      animate={{ opacity: [0.25, 0.55, 0.25] }}
+                      transition={{ duration: 3.6 + (idx % 7) * 0.2, repeat: Infinity, ease: "easeInOut", delay: (idx % 5) * 0.3 }}
+                    />
                   ))}
 
-                  {/* Nós (neurônios) */}
+                  {/* Nós (estrelas) */}
                   {nodes.map((n, idx) => (
-                    <g key={`n-${n.id}`}>
-                      {/* Corpo do neurônio */}
-                      <motion.circle
-                        cx={n.x}
-                        cy={n.y}
-                        r={n.r + 0.8}
-                        fill="currentColor"
-                        initial={{ opacity: 0 }}
-                        whileInView={{ opacity: 1 }}
-                        viewport={{ once: true }}
-                        animate={{ opacity: [0.4, 1, 0.4], scale: [1, 1.15, 1] }}
-                        transition={{ duration: 2.4 + (idx % 9) * 0.2, repeat: Infinity, ease: "easeInOut", delay: idx * 0.05 }}
-                      />
-                      {/* Onda de disparo (anel se expandindo) */}
-                      <motion.circle
-                        cx={n.x}
-                        cy={n.y}
-                        r={n.r + 3}
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth={0.8}
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        whileInView={{ opacity: 1 }}
-                        viewport={{ once: true }}
-                        animate={{ opacity: [0.0, 0.6, 0.0], scale: [0.8, 1.4, 0.8] }}
-                        transition={{ duration: 2.8 + (idx % 6) * 0.3, repeat: Infinity, ease: "easeInOut", delay: (idx % 10) * 0.12 }}
-                      />
-                    </g>
+                    <motion.circle
+                      key={`n-${n.id}`}
+                      cx={n.x}
+                      cy={n.y}
+                      r={n.r}
+                      fill="currentColor"
+                      initial={{ opacity: 0 }}
+                      whileInView={{ opacity: 1 }}
+                      viewport={{ once: true }}
+                      animate={{ opacity: [0.3, 0.9, 0.3], scale: [1, 1.2, 1] }}
+                      transition={{ duration: 2.4 + (idx % 9) * 0.15, repeat: Infinity, ease: "easeInOut", delay: idx * 0.05 }}
+                    />
                   ))}
+
+                  {/* Meteoros sutis somente nas laterais */}
+                  {/* Esquerda */}
+                  <motion.rect
+                    x={leftBand.min + 20}
+                    y={-40}
+                    width={80}
+                    height={1.4}
+                    fill="url(#grad)"
+                    rx={1}
+                    transform="rotate(18 0 0)"
+                    initial={{ opacity: 0 }}
+                    animate={{ y: [ -40, 640, 640 ], opacity: [0, 1, 0] }}
+                    transition={{ duration: 7, repeat: Infinity, ease: "easeOut", delay: 0.8 }}
+                  />
+                  {/* Direita */}
+                  <motion.rect
+                    x={rightBand.max - 120}
+                    y={640}
+                    width={80}
+                    height={1.4}
+                    fill="url(#grad)"
+                    rx={1}
+                    transform="rotate(-18 0 0)"
+                    initial={{ opacity: 0 }}
+                    animate={{ y: [ 640, -40, -40 ], opacity: [0, 1, 0] }}
+                    transition={{ duration: 8, repeat: Infinity, ease: "easeOut", delay: 1.6 }}
+                  />
+
+                  <defs>
+                    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor="rgba(255,255,255,0)" />
+                      <stop offset="40%" stopColor="rgba(255,255,255,0.8)" />
+                      <stop offset="100%" stopColor="rgba(255,255,255,0)" />
+                    </linearGradient>
+                  </defs>
                 </>
               );
             })()}
@@ -1296,8 +1253,6 @@ export default function Home() {
                 variants={cardVariants}
                 whileHover="hover"
                 whileTap="tap"
-                layoutId={`card-${project.title}`}
-                style={{ borderRadius: 12 }}
                 onClick={() => openModal(project)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
@@ -1321,8 +1276,6 @@ export default function Home() {
                       className="relative w-full h-full"
                       variants={imageVariants}
                       whileHover="hover"
-                      layoutId={`image-${project.title}`}
-                      style={{ borderTopLeftRadius: 12, borderTopRightRadius: 12 }}
                     >
                       <ProjectCarousel images={project.images} title={project.title} />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
@@ -1338,8 +1291,6 @@ export default function Home() {
                       className="relative w-full h-full flex flex-col justify-center items-center"
                       variants={imageVariants}
                       whileHover="hover"
-                      layoutId={`image-${project.title}`}
-                      style={{ borderTopLeftRadius: 12, borderTopRightRadius: 12 }}
                     >
                       {/* Efeito de Partículas de Código */}
                       {isClient && (
@@ -1440,7 +1391,6 @@ export default function Home() {
                     className="text-xl font-semibold text-slate-900 dark:text-white mb-2"
                     whileHover={{ color: "#3b82f6" }}
                     transition={{ duration: 0.3 }}
-                    layoutId={`title-${project.title}`}
                   >
                     {project.title}
                   </motion.h3>
@@ -2175,7 +2125,7 @@ export default function Home() {
       </motion.footer>
 
       {/* Modal */}
-      <AnimatePresence onExitComplete={() => setSelectedProject(null)}>
+      <AnimatePresence>
         {isModalOpen && selectedProject && (
           <motion.div
             className="fixed inset-0 z-50 flex items-center justify-center p-4"
@@ -2189,8 +2139,8 @@ export default function Home() {
           >
             {/* Backdrop */}
             <motion.div
-              className={`absolute inset-0 bg-black/60 ${isMobile ? '' : 'backdrop-blur-sm'}`}
-              variants={isMobile ? backdropVariantsMobile : backdropVariants}
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+              variants={backdropVariants}
               onClick={closeModal}
               aria-hidden="true"
             />
@@ -2198,11 +2148,8 @@ export default function Home() {
             {/* Modal Content */}
             <motion.div
               ref={modalRef}
-              className="relative bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto overflow-x-hidden" 
-              layoutId={isMobile ? undefined : (`card-${selectedProject.title}` as const)}
-              style={{ borderRadius: 16 }}
-              variants={isMobile ? modalVariantsMobile : modalVariants}
-              transition={isMobile ? undefined : sharedLayoutTransition.layout}
+              className="relative bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+              variants={modalVariants}
               tabIndex={-1}
               role="document"
             >
@@ -2226,13 +2173,13 @@ export default function Home() {
               {/* Project Image/Content */}
               {selectedProject.images ? (
                 // Projetos com imagens
-                <motion.div className="relative h-96 overflow-hidden rounded-t-2xl" layoutId={isMobile ? undefined : (`image-${selectedProject.title}` as const)} style={{ borderTopLeftRadius: 16, borderTopRightRadius: 16 }} transition={isMobile ? undefined : sharedLayoutTransition.layout}>
+                <div className="relative h-96 overflow-hidden rounded-t-2xl">
                   <ProjectCarousel images={selectedProject.images} title={selectedProject.title} />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
-                </motion.div>
+                </div>
               ) : (
                 // Projetos de IA sem imagens - Design criativo
-                <motion.div className="relative h-96 overflow-hidden rounded-t-2xl bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900" layoutId={isMobile ? undefined : (`image-${selectedProject.title}` as const)} style={{ borderTopLeftRadius: 16, borderTopRightRadius: 16 }} transition={isMobile ? undefined : sharedLayoutTransition.layout}>
+                <div className="relative h-96 overflow-hidden rounded-t-2xl bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
                   {/* Efeito de Partículas de Código */}
                   {isClient && (
                     <motion.div
@@ -2335,7 +2282,7 @@ export default function Home() {
 
                   {/* Overlay Gradiente */}
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900/50 via-transparent to-transparent" />
-                </motion.div>
+                </div>
               )}
 
               {/* Project Content */}
@@ -2343,7 +2290,6 @@ export default function Home() {
                 <motion.h2 
                   id="modal-title"
                   className="text-3xl font-bold text-slate-900 dark:text-white mb-2"
-                  layoutId={`title-${selectedProject.title}`}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 }}
