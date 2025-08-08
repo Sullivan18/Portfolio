@@ -8,6 +8,7 @@ import { useState, useEffect, useRef } from "react";
 const ProjectCarousel = ({ images, title }: { images: string[]; title: string }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [direction, setDirection] = useState(1); // 1 = direita, -1 = esquerda
+  const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set([0])); // Rastreia imagens carregadas
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -24,6 +25,23 @@ const ProjectCarousel = ({ images, title }: { images: string[]; title: string })
 
     return () => clearInterval(interval);
   }, [images.length]);
+
+  // Função para pré-carregar próxima imagem
+  const preloadNextImage = (index: number) => {
+    const nextIndex = (index + 1) % images.length;
+    if (!loadedImages.has(nextIndex)) {
+      const img = new window.Image();
+      img.src = images[nextIndex];
+      img.onload = () => {
+        setLoadedImages(prev => new Set([...prev, nextIndex]));
+      };
+    }
+  };
+
+  // Pré-carrega próxima imagem quando currentImageIndex muda
+  useEffect(() => {
+    preloadNextImage(currentImageIndex);
+  }, [currentImageIndex, images]);
 
   // Descrições alternativas detalhadas para cada projeto
   const getAltText = (imageIndex: number, projectTitle: string) => {
@@ -97,7 +115,11 @@ const ProjectCarousel = ({ images, title }: { images: string[]; title: string })
             fill
             className={getImageObjectFit(title)}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            priority
+            priority={currentImageIndex === 0} // Prioridade apenas para primeira imagem
+            loading={currentImageIndex === 0 ? "eager" : "lazy"}
+            quality={85} // Otimiza qualidade vs tamanho
+            placeholder="blur"
+            blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
           />
         </motion.div>
       </AnimatePresence>
@@ -603,8 +625,11 @@ export default function Home() {
                     alt="André Luiz - Desenvolvedor Full Stack, foto de perfil profissional"
                     fill
                     className="object-cover"
-                    sizes="128px"
+                    sizes="(max-width: 768px) 128px, 128px"
                     priority
+                    quality={90}
+                    placeholder="blur"
+                    blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
                   />
                   <motion.div
                     className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-600/20"
