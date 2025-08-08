@@ -543,10 +543,16 @@ export default function Home() {
               André Luiz
             </motion.div>
             <div className="hidden md:flex space-x-8">
-              {["Início", "Sobre", "Projetos", "Experiência", "Contato"].map((item, index) => (
+              {[
+                { text: "Início", href: "#home" },
+                { text: "Sobre", href: "#about" },
+                { text: "Projetos", href: "#projects" },
+                { text: "Experiência", href: "#experience" },
+                { text: "Contato", href: "#contact" }
+              ].map((item, index) => (
                 <motion.a
-                  key={item}
-                  href={`#${item.toLowerCase().replace("í", "i").replace("ê", "e")}`}
+                  key={item.text}
+                  href={item.href}
                   className="text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors relative overflow-hidden"
                   whileHover={{ 
                     scale: 1.1, 
@@ -563,7 +569,7 @@ export default function Home() {
                     whileHover={{ width: "100%" }}
                     transition={{ duration: 0.3 }}
                   />
-                  {item}
+                  {item.text}
                 </motion.a>
               ))}
             </div>
