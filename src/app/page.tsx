@@ -1072,457 +1072,549 @@ export default function Home() {
       </section>
 
       {/* Experience Section */}
-      <section id="experience" className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
-        <div className="max-w-6xl mx-auto">
+      <section id="experience" className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 relative overflow-hidden">
+        {/* Floating Particles Background */}
+        {isClient && (
+          <motion.div className="absolute inset-0 pointer-events-none">
+            {[...Array(8)].map((_, i) => (
+              <motion.div
+                key={i}
+                className="absolute w-2 h-2 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full opacity-30"
+                style={{
+                  left: `${Math.random() * 100}%`,
+                  top: `${Math.random() * 100}%`,
+                }}
+                animate={{
+                  y: [0, -30, 0],
+                  x: [0, Math.random() * 20 - 10, 0],
+                  scale: [1, 1.2, 1],
+                  opacity: [0.3, 0.6, 0.3],
+                }}
+                transition={{
+                  duration: 4 + Math.random() * 2,
+                  repeat: Infinity,
+                  delay: i * 0.5,
+                  ease: "easeInOut",
+                }}
+              />
+            ))}
+          </motion.div>
+        )}
+
+        <div className="max-w-6xl mx-auto relative z-10">
           <AnimatedText 
             text="Experiência Profissional"
             className="text-2xl sm:text-3xl font-bold text-center text-slate-900 dark:text-white mb-8 sm:mb-12"
           />
           
           <motion.div 
-            className="relative"
+            className="space-y-8 sm:space-y-12"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
           >
-            {/* Zigzag Timeline */}
+            {/* Inoutbox Experience */}
             <motion.div 
-              className="absolute inset-0 pointer-events-none"
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
+              className="relative group"
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 1.5 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
             >
-              {/* SVG Path for Zigzag */}
-              <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-                {/* Background Path (invisible) */}
-                <path
-                  d="M 20 20 L 35 20 L 50 35 L 65 20 L 80 35 L 65 50 L 80 60 L 50 80 L 20 85"
-                  stroke="transparent"
-                  strokeWidth="1.5"
-                  fill="none"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                
-                {/* Animated Path */}
-                <motion.path
-                  d="M 20 20 L 35 20 L 50 35 L 65 20 L 80 35 L 65 50 L 80 60 L 50 80 L 20 85"
-                  stroke="url(#zigzagGradient)"
-                  strokeWidth="2"
-                  fill="none"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  initial={{ pathLength: 0, opacity: 0 }}
-                  whileInView={{ pathLength: 1, opacity: 1 }}
+              {/* Animated Timeline Line */}
+              <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-gradient-to-b from-purple-500 to-pink-600 hidden sm:block">
+                <motion.div
+                  className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 to-pink-600 rounded-full"
+                  initial={{ scaleX: 0 }}
+                  whileInView={{ scaleX: 1 }}
                   viewport={{ once: true }}
-                  transition={{ 
-                    pathLength: { duration: 4, ease: "easeInOut" },
-                    opacity: { duration: 0.5, delay: 0.2 }
-                  }}
+                  transition={{ duration: 1.5, delay: 0.5 }}
                 />
-                
-                {/* Animated Dot that follows the path */}
-                {isClient && (
-                  <motion.div
-                    className="absolute w-2.5 h-2.5 sm:w-3 sm:h-3 bg-gradient-to-r from-white to-blue-500 rounded-full shadow-lg"
-                    style={{
-                      left: "20%",
-                      top: "20%",
-                      transform: "translate(-50%, -50%)"
-                    }}
-                    initial={{ opacity: 0, scale: 0 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true }}
-                    animate={{
-                      left: ["20%", "35%", "50%", "65%", "80%", "65%", "80%", "50%", "20%"],
-                      top: ["20%", "20%", "35%", "20%", "35%", "50%", "60%", "80%", "85%"]
-                    }}
-                    transition={{
-                      duration: 4,
-                      ease: "easeInOut",
-                      delay: 0.8
-                    }}
-                  />
-                )}
-                
-                <defs>
-                  <linearGradient id="zigzagGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#3b82f6" />
-                    <stop offset="25%" stopColor="#8b5cf6" />
-                    <stop offset="50%" stopColor="#ec4899" />
-                    <stop offset="75%" stopColor="#f59e0b" />
-                    <stop offset="100%" stopColor="#10b981" />
-                  </linearGradient>
-
-                </defs>
-              </svg>
-            </motion.div>
-
-            {/* Experience Cards */}
-            <div className="relative">
-              {/* Inoutbox Experience - Left Side (Past) */}
-              <motion.div 
-                className="relative mb-12 sm:mb-16 flex justify-start"
-                initial={{ opacity: 0, x: -100 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-              >
-                {/* Timeline Dot */}
-                <motion.div 
-                  className="absolute left-1/4 top-6 sm:top-8 w-3 h-3 sm:w-4 sm:h-4 bg-gradient-to-r from-purple-500 to-pink-600 rounded-full border-2 sm:border-4 border-white dark:border-slate-800 shadow-lg"
+                {/* Timeline Dots */}
+                <motion.div
+                  className="absolute top-6 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-gradient-to-r from-purple-500 to-pink-600 rounded-full border-2 border-white dark:border-slate-800 shadow-lg"
                   initial={{ scale: 0 }}
                   whileInView={{ scale: 1 }}
                   viewport={{ once: true }}
-                  transition={{ delay: 0.5, duration: 0.5 }}
+                  transition={{ delay: 0.8, duration: 0.5 }}
                   whileHover={{ scale: 1.3 }}
                 />
-
-                {/* Experience Card */}
-                <motion.div 
-                  className="w-full max-w-sm sm:max-w-md bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl shadow-xl p-4 sm:p-6 relative overflow-hidden group"
-                  variants={cardVariants}
-                  whileHover="hover"
-                  whileTap="tap"
+              </div>
+              
+              {/* Experience Card */}
+              <motion.div 
+                className="bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl shadow-xl p-4 sm:p-6 relative overflow-hidden group ml-8 sm:ml-12 border border-transparent hover:border-purple-200 dark:hover:border-purple-800 transition-all duration-300"
+                variants={cardVariants}
+                whileHover="hover"
+                whileTap="tap"
+              >
+                {/* Animated Background Pattern */}
+                <motion.div
+                  className="absolute inset-0 opacity-5"
+                  initial={{ opacity: 0 }}
+                  whileHover={{ opacity: 0.1 }}
+                  transition={{ duration: 0.3 }}
                 >
-                  {/* Gradient Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-purple-500 to-pink-600 transform rotate-12 scale-150" />
+                </motion.div>
+
+                {/* Gradient Overlay */}
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 opacity-0"
+                  whileHover={{ opacity: 1 }}
+                  transition={{ duration: 0.3 }}
+                />
+
+                {/* Company Logo with Glow Effect */}
+                <motion.div 
+                  className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r from-purple-500 to-pink-600 rounded-lg sm:rounded-xl flex items-center justify-center mb-3 sm:mb-4 relative z-10 shadow-lg"
+                  whileHover={{ 
+                    scale: 1.1, 
+                    rotate: 5,
+                    boxShadow: "0 0 20px rgba(147, 51, 234, 0.5)"
+                  }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <span className="text-white font-bold text-base sm:text-lg">I</span>
+                  {/* Glow Effect */}
                   <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 opacity-0"
-                    whileHover={{ opacity: 1 }}
+                    className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-600 rounded-lg sm:rounded-xl blur-sm opacity-0"
+                    whileHover={{ opacity: 0.5 }}
                     transition={{ duration: 0.3 }}
                   />
+                </motion.div>
 
-                                    {/* Company Logo Placeholder */}
+                {/* Content */}
+                <div className="relative z-10">
+                  <motion.h3 
+                    className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-2"
+                    whileHover={{ color: "#9333ea" }}
+                  >
+                    Desenvolvedor Web
+                  </motion.h3>
+                  <motion.p 
+                    className="text-purple-600 dark:text-purple-400 font-semibold mb-1"
+                    whileHover={{ color: "#7c3aed" }}
+                  >
+                    Inoutbox Games
+                  </motion.p>
+                  <motion.p 
+                    className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm mb-2 sm:mb-3"
+                    whileHover={{ color: "#475569" }}
+                  >
+                    nov de 2023 - out de 2024 · 1 ano
+                  </motion.p>
+                  <motion.p 
+                    className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm mb-2 sm:mb-3"
+                    whileHover={{ color: "#475569" }}
+                  >
+                    Sorocaba, São Paulo, Brasil · Remota
+                  </motion.p>
+                  <p className="text-slate-700 dark:text-slate-300 leading-relaxed text-sm sm:text-base">
+                    Atuei no desenvolvimento de websites para uma empresa de jogos, focando na integração das 
+                    funcionalidades de interação com o mapa do jogo utilizando React, React-Leaflet e ReactModal. 
+                    Fui responsável pela personalização de estilos CSS, implementação de recaptcha para segurança 
+                    e integração com o Google Analytics para monitoramento de tráfego.
+                  </p>
+
+                  {/* Skills Tags with Enhanced Animation */}
                   <motion.div 
-                    className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r from-purple-500 to-pink-600 rounded-lg sm:rounded-xl flex items-center justify-center mb-3 sm:mb-4 relative z-10"
-                    whileHover={{ scale: 1.1, rotate: 5 }}
-                    transition={{ duration: 0.3 }}
+                    className="flex flex-wrap gap-1.5 sm:gap-2 mt-3 sm:mt-4"
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.3 }}
                   >
-                    <span className="text-white font-bold text-base sm:text-lg">I</span>
+                    {["React", "JavaScript", "React-Leaflet", "ReactModal", "CSS", "Google Analytics", "Recaptcha"].map((skill, index) => (
+                      <motion.span
+                        key={index}
+                        className="px-2 sm:px-3 py-0.5 sm:py-1 bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 text-xs rounded-full border border-purple-200 dark:border-purple-800"
+                        initial={{ opacity: 0, scale: 0.8, y: 20 }}
+                        whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: 0.4 + index * 0.1 }}
+                        whileHover={{ 
+                          scale: 1.1, 
+                          backgroundColor: "#f3e8ff",
+                          y: -2,
+                          boxShadow: "0 4px 12px rgba(147, 51, 234, 0.3)"
+                        }}
+                      >
+                        {skill}
+                      </motion.span>
+                    ))}
                   </motion.div>
+                </div>
 
-                  {/* Content */}
-                  <div className="relative z-10">
-                    <motion.h3 
-                      className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-2"
-                      whileHover={{ color: "#9333ea" }}
-                    >
-                      Desenvolvedor Web
-                    </motion.h3>
-                    <motion.p 
-                      className="text-purple-600 dark:text-purple-400 font-semibold mb-1"
-                      whileHover={{ color: "#7c3aed" }}
-                    >
-                      Inoutbox Games
-                    </motion.p>
-                    <motion.p 
-                      className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm mb-2 sm:mb-3"
-                      whileHover={{ color: "#475569" }}
-                    >
-                      nov de 2023 - out de 2024 · 1 ano
-                    </motion.p>
-                    <motion.p 
-                      className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm mb-2 sm:mb-3"
-                      whileHover={{ color: "#475569" }}
-                    >
-                      Sorocaba, São Paulo, Brasil · Remota
-                    </motion.p>
-                    <p className="text-slate-700 dark:text-slate-300 leading-relaxed text-sm sm:text-base">
-                      Atuei no desenvolvimento de websites para uma empresa de jogos, focando na integração das 
-                      funcionalidades de interação com o mapa do jogo utilizando React, React-Leaflet e ReactModal. 
-                      Fui responsável pela personalização de estilos CSS, implementação de recaptcha para segurança 
-                      e integração com o Google Analytics para monitoramento de tráfego.
-                    </p>
+                {/* Enhanced Decorative Elements */}
+                <motion.div
+                  className="absolute top-4 right-4 text-purple-500 opacity-20"
+                  animate={{ 
+                    rotate: -360,
+                    scale: [1, 1.2, 1]
+                  }}
+                  transition={{ 
+                    duration: 25, 
+                    repeat: Infinity, 
+                    ease: "linear",
+                    scale: { duration: 2, repeat: Infinity, ease: "easeInOut" }
+                  }}
+                >
+                  <FaPalette size={24} />
+                </motion.div>
 
-                    {/* Skills Tags */}
-                    <motion.div 
-                      className="flex flex-wrap gap-1.5 sm:gap-2 mt-3 sm:mt-4"
-                      initial={{ opacity: 0 }}
-                      whileInView={{ opacity: 1 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: 0.3 }}
-                    >
-                      {["React", "JavaScript", "React-Leaflet", "ReactModal", "CSS", "Google Analytics", "Recaptcha"].map((skill, index) => (
-                        <motion.span
-                          key={index}
-                          className="px-2 sm:px-3 py-0.5 sm:py-1 bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 text-xs rounded-full"
-                          initial={{ opacity: 0, scale: 0.8 }}
-                          whileInView={{ opacity: 1, scale: 1 }}
-                          viewport={{ once: true }}
-                          transition={{ delay: 0.4 + index * 0.1 }}
-                          whileHover={{ scale: 1.1, backgroundColor: "#f3e8ff" }}
-                        >
-                          {skill}
-                        </motion.span>
-                      ))}
-                    </motion.div>
-                  </div>
-
-                  {/* Decorative Elements */}
-                  <motion.div
-                    className="absolute top-4 right-4 text-purple-500 opacity-20"
-                    animate={{ rotate: -360 }}
-                    transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-                  >
-                    <FaPalette size={24} />
-                  </motion.div>
+                {/* Floating Code Elements */}
+                <motion.div
+                  className="absolute -top-2 -right-2 text-purple-400 opacity-30 text-xs"
+                  animate={{ 
+                    y: [0, -10, 0],
+                    opacity: [0.3, 0.6, 0.3]
+                  }}
+                  transition={{ 
+                    duration: 3, 
+                    repeat: Infinity, 
+                    ease: "easeInOut" 
+                  }}
+                >
+                  &lt;/&gt;
                 </motion.div>
               </motion.div>
+            </motion.div>
 
-              {/* Ludare Experience - Right Side (Present) */}
-              <motion.div 
-                className="relative flex justify-end"
-                initial={{ opacity: 0, x: 100 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8, delay: 0.4 }}
-              >
-                {/* Timeline Dot */}
-                <motion.div 
-                  className="absolute right-1/4 top-6 sm:top-8 w-3 h-3 sm:w-4 sm:h-4 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full border-2 sm:border-4 border-white dark:border-slate-800 shadow-lg"
-                  initial={{ scale: 0 }}
-                  whileInView={{ scale: 1 }}
+            {/* Ludare Experience */}
+            <motion.div 
+              className="relative group"
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+            >
+              {/* Animated Timeline Line */}
+              <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-gradient-to-b from-blue-500 to-purple-600 hidden sm:block">
+                <motion.div
+                  className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full"
+                  initial={{ scaleX: 0 }}
+                  whileInView={{ scaleX: 1 }}
                   viewport={{ once: true }}
-                  transition={{ delay: 0.7, duration: 0.5 }}
-                  whileHover={{ scale: 1.3 }}
+                  transition={{ duration: 1.5, delay: 0.7 }}
                 />
-
-                {/* Experience Card */}
-                <motion.div 
-                  className="w-full max-w-sm sm:max-w-md bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl shadow-xl p-4 sm:p-6 relative overflow-hidden group"
-                  variants={cardVariants}
-                  whileHover="hover"
-                  whileTap="tap"
-                >
-                  {/* Gradient Overlay */}
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-pink-500/10 opacity-0"
-                    whileHover={{ opacity: 1 }}
-                    transition={{ duration: 0.3 }}
-                  />
-
-                                    {/* Company Logo Placeholder */}
-                  <motion.div 
-                    className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg sm:rounded-xl flex items-center justify-center mb-3 sm:mb-4 relative z-10"
-                    whileHover={{ scale: 1.1, rotate: -5 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <span className="text-white font-bold text-base sm:text-lg">L</span>
-                  </motion.div>
-
-                  {/* Content */}
-                  <div className="relative z-10">
-                    <motion.h3 
-                      className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-2"
-                      whileHover={{ color: "#3b82f6" }}
-                    >
-                      Desenvolvedor Full Stack
-                    </motion.h3>
-                    <motion.p 
-                      className="text-blue-600 dark:text-blue-400 font-semibold mb-1"
-                      whileHover={{ color: "#1d4ed8" }}
-                    >
-                      Ludare Consultoria
-                    </motion.p>
-                    <motion.p 
-                      className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm mb-2 sm:mb-3"
-                      whileHover={{ color: "#475569" }}
-                    >
-                      out de 2024 - o momento · 11 meses
-                    </motion.p>
-                    <motion.p 
-                      className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm mb-2 sm:mb-3"
-                      whileHover={{ color: "#475569" }}
-                    >
-                      Araçoiaba da Serra, São Paulo, Brasil · Presencial
-                    </motion.p>
-                    <p className="text-slate-700 dark:text-slate-300 leading-relaxed text-sm sm:text-base">
-                      Ludare é uma rede social desenvolvida com React Native, TypeScript, C# e .NET. 
-                      Responsável pelo ciclo completo de desenvolvimento, incluindo implementação de funcionalidades, 
-                      otimização de performance e integração de sistemas. Atuo na modelagem de dados, manutenção de APIs 
-                      e correção de bugs, com foco em garantir a eficiência e segurança da aplicação.
-                    </p>
-
-                    {/* Skills Tags */}
-                    <motion.div 
-                      className="flex flex-wrap gap-1.5 sm:gap-2 mt-3 sm:mt-4"
-                      initial={{ opacity: 0 }}
-                      whileInView={{ opacity: 1 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: 0.5 }}
-                    >
-                      {["React Native", "TypeScript", "C#", ".NET", "SQL Server", "APIs", "Performance"].map((skill, index) => (
-                        <motion.span
-                          key={index}
-                          className="px-2 sm:px-3 py-0.5 sm:py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs rounded-full"
-                          initial={{ opacity: 0, scale: 0.8 }}
-                          whileInView={{ opacity: 1, scale: 1 }}
-                          viewport={{ once: true }}
-                          transition={{ delay: 0.6 + index * 0.1 }}
-                          whileHover={{ scale: 1.1, backgroundColor: "#dbeafe" }}
-                        >
-                          {skill}
-                        </motion.span>
-                      ))}
-                    </motion.div>
-                  </div>
-
-                  {/* Decorative Elements */}
-                  <motion.div
-                    className="absolute top-4 right-4 text-blue-500 opacity-20"
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                  >
-                    <FaCode size={24} />
-                  </motion.div>
-                                  </motion.div>
-                </motion.div>
-              </div>
-
-              {/* Future Section - Em Breve */}
-              <motion.div 
-                className="relative flex justify-start mt-12 sm:mt-16"
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8, delay: 0.6 }}
-              >
-                {/* Timeline Dot */}
-                <motion.div 
-                  className="absolute left-1/4 top-6 sm:top-8 w-3 h-3 sm:w-4 sm:h-4 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full border-2 sm:border-4 border-white dark:border-slate-800 shadow-lg"
+                {/* Timeline Dots */}
+                <motion.div
+                  className="absolute top-6 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full border-2 border-white dark:border-slate-800 shadow-lg"
                   initial={{ scale: 0 }}
                   whileInView={{ scale: 1 }}
                   viewport={{ once: true }}
                   transition={{ delay: 1.0, duration: 0.5 }}
                   whileHover={{ scale: 1.3 }}
                 />
-
-                {/* Future Card */}
-                <motion.div 
-                  className="w-full max-w-sm sm:max-w-md bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl shadow-xl p-4 sm:p-6 relative overflow-hidden group border-2 border-green-200 dark:border-green-800"
-                  variants={cardVariants}
-                  whileHover="hover"
-                  whileTap="tap"
+              </div>
+              
+              {/* Experience Card */}
+              <motion.div 
+                className="bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl shadow-xl p-4 sm:p-6 relative overflow-hidden group ml-8 sm:ml-12 border border-transparent hover:border-blue-200 dark:hover:border-blue-800 transition-all duration-300"
+                variants={cardVariants}
+                whileHover="hover"
+                whileTap="tap"
+              >
+                {/* Animated Background Pattern */}
+                <motion.div
+                  className="absolute inset-0 opacity-5"
+                  initial={{ opacity: 0 }}
+                  whileHover={{ opacity: 0.1 }}
+                  transition={{ duration: 0.3 }}
                 >
-                  {/* Gradient Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 transform -rotate-12 scale-150" />
+                </motion.div>
+
+                {/* Gradient Overlay */}
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-pink-500/10 opacity-0"
+                  whileHover={{ opacity: 1 }}
+                  transition={{ duration: 0.3 }}
+                />
+
+                {/* Company Logo with Glow Effect */}
+                <motion.div 
+                  className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg sm:rounded-xl flex items-center justify-center mb-3 sm:mb-4 relative z-10 shadow-lg"
+                  whileHover={{ 
+                    scale: 1.1, 
+                    rotate: -5,
+                    boxShadow: "0 0 20px rgba(59, 130, 246, 0.5)"
+                  }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <span className="text-white font-bold text-base sm:text-lg">L</span>
+                  {/* Glow Effect */}
                   <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-green-500/10 to-emerald-500/10 opacity-0"
-                    whileHover={{ opacity: 1 }}
+                    className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg sm:rounded-xl blur-sm opacity-0"
+                    whileHover={{ opacity: 0.5 }}
                     transition={{ duration: 0.3 }}
                   />
+                </motion.div>
 
-                  {/* Future Icon */}
+                {/* Content */}
+                <div className="relative z-10">
+                  <motion.h3 
+                    className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-2"
+                    whileHover={{ color: "#3b82f6" }}
+                  >
+                    Desenvolvedor Full Stack
+                  </motion.h3>
+                  <motion.p 
+                    className="text-blue-600 dark:text-blue-400 font-semibold mb-1"
+                    whileHover={{ color: "#1d4ed8" }}
+                  >
+                    Ludare Consultoria
+                  </motion.p>
+                  <motion.p 
+                    className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm mb-2 sm:mb-3"
+                    whileHover={{ color: "#475569" }}
+                  >
+                    out de 2024 - o momento · 11 meses
+                  </motion.p>
+                  <motion.p 
+                    className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm mb-2 sm:mb-3"
+                    whileHover={{ color: "#475569" }}
+                  >
+                    Araçoiaba da Serra, São Paulo, Brasil · Presencial
+                  </motion.p>
+                  <p className="text-slate-700 dark:text-slate-300 leading-relaxed text-sm sm:text-base">
+                    Ludare é uma rede social desenvolvida com React Native, TypeScript, C# e .NET. 
+                    Responsável pelo ciclo completo de desenvolvimento, incluindo implementação de funcionalidades, 
+                    otimização de performance e integração de sistemas. Atuo na modelagem de dados, manutenção de APIs 
+                    e correção de bugs, com foco em garantir a eficiência e segurança da aplicação.
+                  </p>
+
+                  {/* Skills Tags with Enhanced Animation */}
                   <motion.div 
-                    className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r from-green-500 to-emerald-600 rounded-lg sm:rounded-xl flex items-center justify-center mb-3 sm:mb-4 relative z-10"
-                    whileHover={{ scale: 1.1, rotate: 5 }}
-                    transition={{ duration: 0.3 }}
+                    className="flex flex-wrap gap-1.5 sm:gap-2 mt-3 sm:mt-4"
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.5 }}
                   >
-                    <span className="text-white font-bold text-base sm:text-lg">🚀</span>
+                    {["React Native", "TypeScript", "C#", ".NET", "SQL Server", "APIs", "Performance"].map((skill, index) => (
+                      <motion.span
+                        key={index}
+                        className="px-2 sm:px-3 py-0.5 sm:py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs rounded-full border border-blue-200 dark:border-blue-800"
+                        initial={{ opacity: 0, scale: 0.8, y: 20 }}
+                        whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: 0.6 + index * 0.1 }}
+                        whileHover={{ 
+                          scale: 1.1, 
+                          backgroundColor: "#dbeafe",
+                          y: -2,
+                          boxShadow: "0 4px 12px rgba(59, 130, 246, 0.3)"
+                        }}
+                      >
+                        {skill}
+                      </motion.span>
+                    ))}
                   </motion.div>
+                </div>
 
-                  {/* Content */}
-                  <div className="relative z-10">
-                    <motion.h3 
-                      className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-2"
-                      whileHover={{ color: "#059669" }}
-                    >
-                      Em Breve...
-                    </motion.h3>
-                    <motion.p 
-                      className="text-green-600 dark:text-green-400 font-semibold mb-1"
-                      whileHover={{ color: "#047857" }}
-                    >
-                      Próximos Desafios
-                    </motion.p>
-                    <motion.p 
-                      className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm mb-2 sm:mb-3"
-                      whileHover={{ color: "#475569" }}
-                    >
-                      Sempre em evolução
-                    </motion.p>
-                    <motion.p 
-                      className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm mb-2 sm:mb-3"
-                      whileHover={{ color: "#475569" }}
-                    >
-                      Buscando novas oportunidades
-                    </motion.p>
-                    <p className="text-slate-700 dark:text-slate-300 leading-relaxed text-sm sm:text-base">
-                      Continuo aprimorando minhas habilidades e explorando novas tecnologias. 
-                      Sempre aberto a novos desafios e oportunidades de crescimento profissional.
-                    </p>
+                {/* Enhanced Decorative Elements */}
+                <motion.div
+                  className="absolute top-4 right-4 text-blue-500 opacity-20"
+                  animate={{ 
+                    rotate: 360,
+                    scale: [1, 1.2, 1]
+                  }}
+                  transition={{ 
+                    duration: 20, 
+                    repeat: Infinity, 
+                    ease: "linear",
+                    scale: { duration: 2, repeat: Infinity, ease: "easeInOut" }
+                  }}
+                >
+                  <FaCode size={24} />
+                </motion.div>
 
-                    {/* Skills Tags */}
-                    <motion.div 
-                      className="flex flex-wrap gap-1.5 sm:gap-2 mt-3 sm:mt-4"
-                      initial={{ opacity: 0 }}
-                      whileInView={{ opacity: 1 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: 0.7 }}
-                    >
-                      {["Aprendizado Contínuo", "Novas Tecnologias", "Desafios", "Crescimento"].map((skill, index) => (
-                        <motion.span
-                          key={index}
-                          className="px-2 sm:px-3 py-0.5 sm:py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 text-xs rounded-full"
-                          initial={{ opacity: 0, scale: 0.8 }}
-                          whileInView={{ opacity: 1, scale: 1 }}
-                          viewport={{ once: true }}
-                          transition={{ delay: 0.8 + index * 0.1 }}
-                          whileHover={{ scale: 1.1, backgroundColor: "#dcfce7" }}
-                        >
-                          {skill}
-                        </motion.span>
-                      ))}
-                    </motion.div>
-                  </div>
-
-                  {/* Decorative Elements */}
-                  <motion.div
-                    className="absolute top-4 right-4 text-green-500 opacity-20"
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-                  >
-                    <span className="text-2xl">🌟</span>
-                  </motion.div>
+                {/* Floating Code Elements */}
+                <motion.div
+                  className="absolute -top-2 -right-2 text-blue-400 opacity-30 text-xs"
+                  animate={{ 
+                    y: [0, -10, 0],
+                    opacity: [0.3, 0.6, 0.3]
+                  }}
+                  transition={{ 
+                    duration: 3, 
+                    repeat: Infinity, 
+                    ease: "easeInOut" 
+                  }}
+                >
+                  {`{}`}
                 </motion.div>
               </motion.div>
+            </motion.div>
 
-              {/* Floating Elements */}
-            {isClient && (
-              <motion.div
-                className="absolute inset-0 pointer-events-none"
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
+            {/* Future Section - Em Breve */}
+            <motion.div 
+              className="relative group"
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.6 }}
+            >
+              {/* Animated Timeline Line */}
+              <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-gradient-to-b from-green-500 to-emerald-600 hidden sm:block">
+                <motion.div
+                  className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full"
+                  initial={{ scaleX: 0 }}
+                  whileInView={{ scaleX: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 1.5, delay: 0.9 }}
+                />
+                {/* Timeline Dots */}
+                <motion.div
+                  className="absolute top-6 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full border-2 border-white dark:border-slate-800 shadow-lg"
+                  initial={{ scale: 0 }}
+                  whileInView={{ scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 1.2, duration: 0.5 }}
+                  whileHover={{ scale: 1.3 }}
+                />
+              </div>
+              
+              {/* Future Card */}
+              <motion.div 
+                className="bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl shadow-xl p-4 sm:p-6 relative overflow-hidden group ml-8 sm:ml-12 border-2 border-green-200 dark:border-green-800 hover:border-green-300 dark:hover:border-green-700 transition-all duration-300"
+                variants={cardVariants}
+                whileHover="hover"
+                whileTap="tap"
               >
-                {[
-                  { left: 10, top: 20, icon: FaCode, color: "text-blue-500" },
-                  { left: 90, top: 40, icon: FaMobile, color: "text-purple-500" },
-                  { left: 20, top: 70, icon: FaDatabase, color: "text-green-500" },
-                  { left: 80, top: 80, icon: FaServer, color: "text-pink-500" }
-                ].map((element, index) => (
+                {/* Animated Background Pattern */}
+                <motion.div
+                  className="absolute inset-0 opacity-5"
+                  initial={{ opacity: 0 }}
+                  whileHover={{ opacity: 0.1 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <div className="absolute inset-0 bg-gradient-to-br from-green-500 to-emerald-600 transform rotate-45 scale-150" />
+                </motion.div>
+
+                {/* Gradient Overlay */}
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-green-500/10 to-emerald-500/10 opacity-0"
+                  whileHover={{ opacity: 1 }}
+                  transition={{ duration: 0.3 }}
+                />
+
+                {/* Future Icon with Glow Effect */}
+                <motion.div 
+                  className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r from-green-500 to-emerald-600 rounded-lg sm:rounded-xl flex items-center justify-center mb-3 sm:mb-4 relative z-10 shadow-lg"
+                  whileHover={{ 
+                    scale: 1.1, 
+                    rotate: 5,
+                    boxShadow: "0 0 20px rgba(5, 150, 105, 0.5)"
+                  }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <span className="text-white font-bold text-base sm:text-lg">🚀</span>
+                  {/* Glow Effect */}
                   <motion.div
-                    key={index}
-                    className={`absolute ${element.color} opacity-20`}
-                    style={{ left: `${element.left}%`, top: `${element.top}%` }}
-                    animate={{
-                      y: [0, -20, 0],
-                      rotate: [0, 360],
-                      scale: [1, 1.2, 1]
-                    }}
-                    transition={{
-                      duration: 4,
-                      delay: index * 0.5,
-                      repeat: Infinity,
-                      ease: "easeInOut"
-                    }}
+                    className="absolute inset-0 bg-gradient-to-r from-green-500 to-emerald-600 rounded-lg sm:rounded-xl blur-sm opacity-0"
+                    whileHover={{ opacity: 0.5 }}
+                    transition={{ duration: 0.3 }}
+                  />
+                </motion.div>
+
+                {/* Content */}
+                <div className="relative z-10">
+                  <motion.h3 
+                    className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-2"
+                    whileHover={{ color: "#059669" }}
                   >
-                    <element.icon size={20} />
+                    Em Breve...
+                  </motion.h3>
+                  <motion.p 
+                    className="text-green-600 dark:text-green-400 font-semibold mb-1"
+                    whileHover={{ color: "#047857" }}
+                  >
+                    Próximos Desafios
+                  </motion.p>
+                  <motion.p 
+                    className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm mb-2 sm:mb-3"
+                    whileHover={{ color: "#475569" }}
+                  >
+                    Sempre em evolução
+                  </motion.p>
+                  <motion.p 
+                    className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm mb-2 sm:mb-3"
+                    whileHover={{ color: "#475569" }}
+                  >
+                    Buscando novas oportunidades
+                  </motion.p>
+                  <p className="text-slate-700 dark:text-slate-300 leading-relaxed text-sm sm:text-base">
+                    Continuo aprimorando minhas habilidades e explorando novas tecnologias. 
+                    Sempre aberto a novos desafios e oportunidades de crescimento profissional.
+                  </p>
+
+                  {/* Skills Tags with Enhanced Animation */}
+                  <motion.div 
+                    className="flex flex-wrap gap-1.5 sm:gap-2 mt-3 sm:mt-4"
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.7 }}
+                  >
+                    {["Aprendizado Contínuo", "Novas Tecnologias", "Desafios", "Crescimento"].map((skill, index) => (
+                      <motion.span
+                        key={index}
+                        className="px-2 sm:px-3 py-0.5 sm:py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 text-xs rounded-full border border-green-200 dark:border-green-800"
+                        initial={{ opacity: 0, scale: 0.8, y: 20 }}
+                        whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: 0.8 + index * 0.1 }}
+                        whileHover={{ 
+                          scale: 1.1, 
+                          backgroundColor: "#dcfce7",
+                          y: -2,
+                          boxShadow: "0 4px 12px rgba(5, 150, 105, 0.3)"
+                        }}
+                      >
+                        {skill}
+                      </motion.span>
+                    ))}
                   </motion.div>
-                ))}
+                </div>
+
+                {/* Enhanced Decorative Elements */}
+                <motion.div
+                  className="absolute top-4 right-4 text-green-500 opacity-20"
+                  animate={{ 
+                    rotate: 360,
+                    scale: [1, 1.2, 1]
+                  }}
+                  transition={{ 
+                    duration: 30, 
+                    repeat: Infinity, 
+                    ease: "linear",
+                    scale: { duration: 2, repeat: Infinity, ease: "easeInOut" }
+                  }}
+                >
+                  <span className="text-2xl">🌟</span>
+                </motion.div>
+
+                {/* Floating Code Elements */}
+                <motion.div
+                  className="absolute -top-2 -right-2 text-green-400 opacity-30 text-xs"
+                  animate={{ 
+                    y: [0, -10, 0],
+                    opacity: [0.3, 0.6, 0.3]
+                  }}
+                  transition={{ 
+                    duration: 3, 
+                    repeat: Infinity, 
+                    ease: "easeInOut" 
+                  }}
+                >
+                  ✨
+                </motion.div>
               </motion.div>
-            )}
+            </motion.div>
           </motion.div>
         </div>
       </section>
