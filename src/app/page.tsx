@@ -146,6 +146,8 @@ export default function Home() {
 
   useEffect(() => {
     setIsClient(true);
+    // Força a página a voltar ao topo quando carregada/atualizada
+    window.scrollTo(0, 0);
   }, []);
 
   const projects = [
