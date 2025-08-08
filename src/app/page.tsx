@@ -1,8 +1,248 @@
 "use client";
 import Image from "next/image";
-import { FaGithub, FaLinkedin, FaEnvelope, FaCode, FaPalette, FaMobile, FaDatabase, FaServer, FaTimes, FaExternalLinkAlt } from "react-icons/fa";
+import { FaGithub, FaLinkedin, FaEnvelope, FaCode, FaPalette, FaDatabase, FaServer, FaTimes, FaExternalLinkAlt, FaReact, FaNodeJs, FaPython, FaHtml5, FaCss3Alt, FaJs, FaGitAlt } from "react-icons/fa";
+import type { IconType } from "react-icons";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
+
+type Project = {
+  title: string;
+  description: string;
+  tech: string[];
+  images?: string[];
+  image?: string;
+  github?: string | null;
+  live?: string;
+};
+
+type Skill = {
+  name: string;
+  icon: IconType;
+  items: string[];
+};
+
+// Fundo criativo e animado para o Hero (com z-index controlado)
+const HeroBackground = () => {
+  const bokehDots: Array<{ x: string; y: string; size: number; delay: number }> = [
+    { x: "12%", y: "30%", size: 14, delay: 0.2 },
+    { x: "28%", y: "72%", size: 18, delay: 0.4 },
+    { x: "62%", y: "22%", size: 12, delay: 0.1 },
+    { x: "82%", y: "58%", size: 16, delay: 0.3 },
+    { x: "52%", y: "84%", size: 10, delay: 0.6 },
+  ];
+
+  type TechType = 'code' | 'db' | 'server' | 'palette' | 'react' | 'js' | 'html' | 'css' | 'git' | 'node' | 'python';
+  const techFloaters: Array<{ x: string; y: string; delay: number; size: number; color: string; type: TechType }> = [
+    { x: "10%", y: "15%", delay: 0.0, size: 18, color: "text-blue-300/80", type: 'code' },
+    { x: "88%", y: "20%", delay: 0.6, size: 20, color: "text-emerald-300/80", type: 'server' },
+    { x: "18%", y: "75%", delay: 1.0, size: 16, color: "text-fuchsia-300/80", type: 'palette' },
+    { x: "78%", y: "78%", delay: 0.3, size: 18, color: "text-cyan-300/80", type: 'db' },
+    { x: "24%", y: "24%", delay: 0.8, size: 22, color: "text-cyan-300/80", type: 'react' },
+    { x: "72%", y: "30%", delay: 1.2, size: 18, color: "text-yellow-300/80", type: 'js' },
+    { x: "14%", y: "58%", delay: 0.4, size: 18, color: "text-orange-300/80", type: 'html' },
+    { x: "34%", y: "66%", delay: 1.0, size: 18, color: "text-sky-300/80", type: 'css' },
+    { x: "60%", y: "12%", delay: 0.2, size: 18, color: "text-rose-300/80", type: 'git' },
+    { x: "84%", y: "66%", delay: 1.4, size: 20, color: "text-green-300/80", type: 'node' },
+    { x: "42%", y: "18%", delay: 0.9, size: 20, color: "text-indigo-300/80", type: 'python' },
+  ];
+
+  return (
+    <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
+      {/* Grid sutil */}
+      <motion.div
+        className="absolute inset-0"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 0.12 }}
+        transition={{ duration: 1.2 }}
+        style={{
+          backgroundImage: "radial-gradient(rgba(100,116,139,0.55) 1px, transparent 1px)",
+          backgroundSize: "22px 22px",
+          backgroundPosition: "0 0",
+        }}
+      />
+
+      {/* (Aurora bands removidos) */}
+
+      {/* Blobs principais com blur forte */}
+      <motion.div
+        className="absolute -top-40 -left-32 w-[36rem] h-[36rem] rounded-full blur-3xl"
+        initial={{ scale: 0.95, rotate: -12 }}
+        animate={{
+          scale: [0.95, 1.05, 0.95],
+          rotate: [-12, 12, -12],
+          x: [0, 18, 0],
+          y: [0, -26, 0],
+        }}
+        transition={{ duration: 10, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" }}
+        style={{
+          background:
+            "radial-gradient(closest-side, rgba(59,130,246,0.40), rgba(147,51,234,0.25) 60%, transparent 70%)",
+        }}
+      />
+      <motion.div
+        className="absolute -bottom-48 -right-24 w-[32rem] h-[32rem] rounded-full blur-3xl"
+        initial={{ scale: 0.96, rotate: 10 }}
+        animate={{
+          scale: [1.02, 0.92, 1.02],
+          rotate: [10, -10, 10],
+          x: [0, -22, 0],
+          y: [0, 18, 0],
+        }}
+        transition={{ duration: 12, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" }}
+        style={{
+          background:
+            "radial-gradient(closest-side, rgba(16,185,129,0.30), rgba(59,130,246,0.20) 60%, transparent 70%)",
+        }}
+      />
+
+      {/* Bokeh dots */}
+      {bokehDots.map((pos, i) => (
+        <motion.div
+          key={`bokeh-${i}`}
+          className="absolute rounded-full bg-white/30 dark:bg-white/20"
+          style={{ left: pos.x, top: pos.y, width: pos.size, height: pos.size, filter: "blur(2px)" }}
+          animate={{ opacity: [0.25, 0.6, 0.25], y: [0, -6, 0] }}
+          transition={{ duration: 3 + i * 0.4, delay: pos.delay, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" }}
+        />
+      ))}
+
+      {/* Tokens de código flutuando */}
+      {[
+        { text: '{ }', x: '6%', y: '40%', d: 6 },
+        { text: '()=>', x: '16%', y: '26%', d: 7 },
+        { text: '<div/>', x: '28%', y: '62%', d: 6.5 },
+        { text: 'const', x: '42%', y: '18%', d: 6.8 },
+        { text: 'return', x: '56%', y: '30%', d: 7.2 },
+        { text: 'async', x: '64%', y: '66%', d: 6.2 },
+        { text: 'await', x: '78%', y: '42%', d: 6.9 },
+        { text: '</>', x: '90%', y: '70%', d: 6.4 },
+      ].map((t, ti) => (
+        <motion.span
+          key={`token-${ti}`}
+          className="absolute font-mono text-xs md:text-sm text-slate-600/70 dark:text-slate-300/60"
+          style={{ left: t.x, top: t.y }}
+          animate={{ y: [0, -8, 0], opacity: [0.4, 0.85, 0.4] }}
+          transition={{ duration: t.d, delay: ti * 0.15, repeat: Infinity, ease: 'easeInOut' }}
+        >
+          {t.text}
+        </motion.span>
+      ))}
+
+      {/* Code Rain (leve) */}
+      <div className="absolute inset-0">
+        {[
+          { left: '8%' }, { left: '22%' }, { left: '36%' }, { left: '50%' }, { left: '64%' }, { left: '78%' }, { left: '88%' }
+        ].map((col, ci) => (
+          <motion.div
+            key={`coderain-${ci}`}
+            className="absolute top-[-120%] h-[220%] w-6 md:w-8"
+            style={{ left: col.left }}
+            initial={{ y: '-10%' }}
+            animate={{ y: '10%' }}
+            transition={{ duration: 10 + ci * 1.5, repeat: Infinity, repeatType: 'mirror', ease: 'linear', delay: ci * 0.6 }}
+          >
+            {Array.from({ length: 18 }).map((_, ri) => (
+              <span
+                key={`rain-ch-${ci}-${ri}`}
+                className="block font-mono text-[10px] md:text-xs leading-4 text-emerald-300/60"
+                style={{ opacity: (ri % 6) / 6 + 0.2 }}
+              >
+                {['0','1','{','}','<','>','/','(',')','=','>'][ri % 10]}
+              </span>
+            ))}
+          </motion.div>
+        ))}
+      </div>
+
+      
+
+      {/* Cursor piscando */}
+      <motion.span
+        className="absolute left-1/2 top-[58%] -translate-x-1/2 w-3 h-4 bg-slate-400/60 rounded-sm"
+        animate={{ opacity: [0, 1, 0] }}
+        transition={{ duration: 1, repeat: Infinity }}
+      />
+
+      {/* Orbitas sutis no centro */}
+      <motion.div
+        className="absolute left-1/2 top-1/2"
+        style={{ transform: "translate(-50%, -50%)" }}
+        animate={{ rotate: 360 }}
+        transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
+      >
+        {[
+          { radius: 140, size: 6, opacity: 0.18 },
+          { radius: 100, size: 5, opacity: 0.16 },
+          { radius: 70, size: 4, opacity: 0.14 },
+        ].map((ring, ri) => (
+          [0, 60, 120, 180, 240, 300].map((deg, di) => (
+            <motion.span
+              key={`orb-${ri}-${di}`}
+              className="absolute rounded-full bg-white"
+              style={{
+                width: ring.size,
+                height: ring.size,
+                left: "50%",
+                top: "50%",
+                opacity: ring.opacity,
+                transform: `translate(-50%, -50%) rotate(${deg}deg) translateX(${ring.radius}px)`,
+                filter: "blur(1px)",
+              }}
+              animate={{ opacity: [ring.opacity * 0.7, ring.opacity, ring.opacity * 0.7] }}
+              transition={{ duration: 3 + di * 0.2, repeat: Infinity, ease: "easeInOut" }}
+            />
+          ))
+        ))}
+      </motion.div>
+
+      {/* Sparkles (estrelas piscando) */}
+      {[
+        { x: "8%", y: "18%", d: 1.8 },
+        { x: "22%", y: "12%", d: 2.2 },
+        { x: "46%", y: "8%", d: 2.0 },
+        { x: "70%", y: "14%", d: 2.4 },
+        { x: "90%", y: "26%", d: 2.1 },
+        { x: "6%", y: "64%", d: 2.3 },
+        { x: "32%", y: "86%", d: 2.6 },
+        { x: "60%", y: "78%", d: 2.2 },
+        { x: "86%", y: "68%", d: 2.5 },
+      ].map((s, si) => (
+        <motion.span
+          key={`spark-${si}`}
+          className="absolute block bg-white rounded-full"
+          style={{ left: s.x, top: s.y, width: 2, height: 2, filter: "blur(0.5px)" }}
+          animate={{ opacity: [0.2, 0.8, 0.2], scale: [1, 1.4, 1] }}
+          transition={{ duration: s.d, delay: si * 0.15, repeat: Infinity, ease: "easeInOut" }}
+        />
+      ))}
+
+      {/* Ícones flutuantes de tech */}
+      {techFloaters.map((f, i) => (
+        <motion.div
+          key={`float-${i}`}
+          className={`absolute ${f.color}`}
+          style={{ left: f.x, top: f.y }}
+          animate={{ y: [0, -10, 0], x: [0, 6, 0], opacity: [0.6, 0.95, 0.6], rotate: [-4, 4, -4] }}
+          transition={{ duration: 6 + i, delay: f.delay, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" }}
+        >
+          {f.type === 'code' && <FaCode size={f.size} />}
+          {f.type === 'db' && <FaDatabase size={f.size} />}
+          {f.type === 'server' && <FaServer size={f.size} />}
+          {f.type === 'palette' && <FaPalette size={f.size} />}
+          {f.type === 'react' && <FaReact size={f.size} />}
+          {f.type === 'js' && <FaJs size={f.size} />}
+          {f.type === 'html' && <FaHtml5 size={f.size} />}
+          {f.type === 'css' && <FaCss3Alt size={f.size} />}
+          {f.type === 'git' && <FaGitAlt size={f.size} />}
+          {f.type === 'node' && <FaNodeJs size={f.size} />}
+          {f.type === 'python' && <FaPython size={f.size} />}
+        </motion.div>
+      ))}
+
+      {/* (Efeito de varredura removido) */}
+    </div>
+  );
+};
 
 // Componente do Carrossel de Projetos
 const ProjectCarousel = ({ images, title }: { images: string[]; title: string }) => {
@@ -138,11 +378,15 @@ const ProjectCarousel = ({ images, title }: { images: string[]; title: string })
 };
 
 export default function Home() {
-  const [selectedProject, setSelectedProject] = useState<typeof projects[0] | null>(null);
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedSkill, setSelectedSkill] = useState<Skill | null>(null);
+  const [isSkillModalOpen, setIsSkillModalOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const skillModalRef = useRef<HTMLDivElement>(null);
+  const closeSkillButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     setIsClient(true);
@@ -150,7 +394,7 @@ export default function Home() {
     window.scrollTo(0, 0);
   }, []);
 
-  const projects = [
+  const projects: Project[] = [
     {
       title: "Ludare - Rede Social",
       description: "Aplicativo de rede social desenvolvido com React Native e TypeScript no frontend, C# e .NET no backend, e SQL Server no banco de dados. Responsável por implementação de funcionalidades, otimização de performance e integração de sistemas.",
@@ -217,7 +461,7 @@ export default function Home() {
     }
   ];
 
-  const skills = [
+  const skills: Skill[] = [
     { 
       name: "Frontend", 
       icon: FaCode, 
@@ -252,17 +496,17 @@ export default function Home() {
     }
   };
 
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        duration: 0.5,
-        ease: "easeOut" as const
-      }
-    }
-  };
+  // const itemVariants = {
+  //   hidden: { y: 20, opacity: 0 },
+  //   visible: {
+  //     y: 0,
+  //     opacity: 1,
+  //     transition: {
+  //       duration: 0.5,
+  //       ease: "easeOut" as const
+  //     }
+  //   }
+  // };
 
   const cardVariants = {
     hidden: { scale: 0.8, opacity: 0, y: 50 },
@@ -395,29 +639,36 @@ export default function Home() {
     }
   };
 
+  // Transição compartilhada mais fluida para animações de layout (cards -> modal)
+  const sharedLayoutTransition = {
+    layout: { type: 'spring', stiffness: 260, damping: 30 }
+  } as const;
+
   // Variantes do modal
   const modalVariants = {
     hidden: {
       opacity: 0,
-      scale: 0.8,
-      y: 50
+      scale: 0.98,
+      y: 12
     },
     visible: {
       opacity: 1,
       scale: 1,
       y: 0,
       transition: {
-        duration: 0.4,
-        ease: "easeOut" as const
+        type: 'spring' as const,
+        stiffness: 220,
+        damping: 26
       }
     },
     exit: {
       opacity: 0,
-      scale: 0.8,
-      y: 50,
+      scale: 0.98,
+      y: 8,
       transition: {
-        duration: 0.3,
-        ease: "easeIn" as const
+        type: 'spring' as const,
+        stiffness: 240,
+        damping: 30
       }
     }
   };
@@ -427,19 +678,21 @@ export default function Home() {
     visible: { 
       opacity: 1,
       transition: {
-        duration: 0.3
+        duration: 0.35,
+        ease: "easeOut" as const
       }
     },
     exit: { 
       opacity: 0,
       transition: {
-        duration: 0.2
+        duration: 0.25,
+        ease: "easeIn" as const
       }
     }
   };
 
   // Função para abrir modal
-  const openModal = (project: typeof projects[0]) => {
+  const openModal = (project: Project) => {
     setSelectedProject(project);
     setIsModalOpen(true);
     // Foco no modal após a animação
@@ -451,20 +704,34 @@ export default function Home() {
   // Função para fechar modal
   const closeModal = () => {
     setIsModalOpen(false);
-    setTimeout(() => setSelectedProject(null), 300);
+  };
+
+  // Funções para abrir/fechar modal de Skill
+  const openSkillModal = (skill: Skill) => {
+    setSelectedSkill(skill);
+    setIsSkillModalOpen(true);
+    setTimeout(() => {
+      skillModalRef.current?.focus();
+    }, 100);
+  };
+
+  const closeSkillModal = () => {
+    setIsSkillModalOpen(false);
+    setTimeout(() => setSelectedSkill(null), 300);
   };
 
   // Gerenciar foco do teclado
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isModalOpen) {
-        closeModal();
+      if (e.key === 'Escape') {
+        if (isModalOpen) closeModal();
+        if (isSkillModalOpen) closeSkillModal();
       }
     };
 
-    if (isModalOpen) {
+    const anyModalOpen = isModalOpen || isSkillModalOpen;
+    if (anyModalOpen) {
       document.addEventListener('keydown', handleEscape);
-      // Prevenir scroll do body
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'unset';
@@ -474,7 +741,7 @@ export default function Home() {
       document.removeEventListener('keydown', handleEscape);
       document.body.style.overflow = 'unset';
     };
-  }, [isModalOpen]);
+  }, [isModalOpen, isSkillModalOpen]);
 
   // Função para animar texto letra por letra
   const AnimatedText = ({ text, className }: { text: string; className: string }) => {
@@ -501,31 +768,77 @@ export default function Home() {
   };
 
   // Função para determinar a altura do container baseada no projeto
-  const getImageContainerHeight = (projectTitle: string) => {
+  const getImageContainerHeight = () => {
     // Altura flexível para todos os projetos, permitindo que as imagens se ajustem naturalmente
     return "h-64 md:h-72 lg:h-80 xl:h-96"; // Altura generosa para todos os projetos
   };
 
   // Função para determinar o padding baseado no projeto
-  const getImagePadding = (projectTitle: string) => {
+  const getImagePadding = () => {
     // Padding generoso para todos os projetos, permitindo que as imagens tenham espaço adequado
     return "p-2 md:p-3 lg:p-4"; // Padding responsivo para todos os projetos
   };
 
   // Função para determinar o object-fit baseado no projeto
-  const getImageObjectFit = (projectTitle: string) => {
-    // Usar object-contain para todos os projetos, garantindo que a imagem completa seja exibida
-    return "object-contain";
-  };
+  // const getImageObjectFit = (projectTitle: string) => {
+  //   // Usar object-contain para todos os projetos, garantindo que a imagem completa seja exibida
+  //   return "object-contain";
+  // };
 
   // Função para determinar o aspect ratio baseado no projeto
-  const getImageAspectRatio = (projectTitle: string) => {
-    // Para o Ludare (imagem vertical), usar aspect-ratio específico
-    if (projectTitle.includes("Ludare")) {
-      return "aspect-[9/16]"; // Proporção vertical (9:16)
-    }
-    // Para projetos horizontais, usar aspect-ratio horizontal
-    return "aspect-[16/9]"; // Proporção horizontal (16:9)
+  // const getImageAspectRatio = (projectTitle: string) => {
+  //   // Para o Ludare (imagem vertical), usar aspect-ratio específico
+  //   if (projectTitle.includes("Ludare")) {
+  //     return "aspect-[9/16]"; // Proporção vertical (9:16)
+  //   }
+  //   // Para projetos horizontais, usar aspect-ratio horizontal
+  //   return "aspect-[16/9]"; // Proporção horizontal (16:9)
+  // };
+
+  // Estética dinâmica por Skill
+  const getSkillGradient = (skillName: string) => {
+    if (skillName.includes('Front')) return 'from-blue-600 via-purple-600 to-pink-600';
+    if (skillName.includes('Back')) return 'from-amber-600 via-orange-600 to-red-600';
+    if (skillName.includes('Banco')) return 'from-emerald-600 via-teal-600 to-cyan-600';
+    if (skillName.includes('IA')) return 'from-fuchsia-600 via-purple-600 to-indigo-600';
+    return 'from-slate-700 via-slate-800 to-slate-900';
+  };
+
+  const getSkillTagline = (skillName: string) => {
+    if (skillName.includes('Front')) return 'Interfaces rápidas, acessíveis e animadas';
+    if (skillName.includes('Back')) return 'APIs robustas, seguras e escaláveis';
+    if (skillName.includes('Banco')) return 'Dados consistentes, consultas eficientes';
+    if (skillName.includes('IA')) return 'Modelos inteligentes, insights poderosos';
+    return 'Excelência técnica e experiência do usuário';
+  };
+
+  const getSkillParticles = (skillName: string) => {
+    if (skillName.includes('Front')) return ['JS', 'TS', '<div/>', 'CSS', 'hooks', 'state', 'UI', 'UX', 'DOM'];
+    if (skillName.includes('Back')) return ['API', 'REST', 'JWT', 'Queue', 'Cache', 'SOLID', 'C#', 'Node'];
+    if (skillName.includes('Banco')) return ['SQL', 'JOIN', 'Index', 'ACID', 'NoSQL', 'Query'];
+    if (skillName.includes('IA')) return ['ML', 'DL', 'Tensor', 'ROC', 'NLP', 'CNN'];
+    return ['Code', 'Dev'];
+  };
+
+  // Projetos relacionados à skill selecionada
+  const getRelatedProjects = (skill: Skill) => {
+    const skillSet = new Set(skill.items);
+    const scored = projects.map((p) => {
+      const overlap = p.tech.filter((t: string) => skillSet.has(t));
+      // Bônus leve para projetos com imagens ao falar de Frontend
+      const imageBonus = skill.name.includes('Front') && p.images ? 0.5 : 0;
+      return { project: p, score: overlap.length + imageBonus, overlap };
+    });
+    return scored
+      .filter((s) => s.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 3);
+  };
+
+  // Pega a imagem de preview do projeto (primeira disponível)
+  const getProjectPreviewImage = (project: Project): string | null => {
+    // Usa somente imagens que sabemos existir sob /public
+    return project.images?.[0] ?? null;
   };
 
   return (
@@ -583,10 +896,11 @@ export default function Home() {
       </motion.nav>
 
       {/* Hero Section */}
-      <section id="home" className="pt-20 pb-16 px-4 sm:px-6 lg:px-8">
+      <section id="home" className="relative overflow-hidden pt-20 pb-16 px-4 sm:px-6 lg:px-8">
+        <HeroBackground />
         <div className="max-w-6xl mx-auto">
           <motion.div 
-            className="text-center"
+            className="text-center relative z-10"
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
@@ -614,17 +928,7 @@ export default function Home() {
                     placeholder="blur"
                     blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
                   />
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-600/20"
-                    animate={{ 
-                      backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
-                    }}
-                    transition={{ 
-                      duration: 3, 
-                      repeat: Infinity,
-                      ease: "linear"
-                    }}
-                  />
+                  {/* Overlay removido por solicitação */}
                 </motion.div>
               </div>
             </motion.div>
@@ -766,10 +1070,20 @@ export default function Home() {
               {skills.map((skill, index) => (
                 <motion.div
                   key={index}
-                  className="bg-slate-50 dark:bg-slate-800 p-6 rounded-lg relative overflow-hidden"
+                  className="bg-slate-50 dark:bg-slate-800 p-6 rounded-lg relative overflow-hidden cursor-pointer"
                   variants={skillCardVariants}
                   whileHover="hover"
                   whileTap="tap"
+                  onClick={() => openSkillModal(skill)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      openSkillModal(skill);
+                    }
+                  }}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Ver detalhes de ${skill.name}`}
                 >
                   <motion.div
                     className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 opacity-0"
@@ -803,8 +1117,131 @@ export default function Home() {
       </section>
 
       {/* Projects Section */}
-      <section id="projects" className="py-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
+      <section id="projects" className="py-16 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+        {/* Fundo animado: Rede neural em SVG */}
+        {isClient && (
+          <motion.svg
+            className="absolute inset-0 w-full h-full text-slate-400/40 dark:text-slate-300/30"
+            viewBox="0 0 1000 600"
+            preserveAspectRatio="none"
+            aria-hidden
+          >
+            {(() => {
+              const seed = 42;
+              const pseudoRandom = (i: number) => {
+                // PRNG simples e determinístico para estabilidade visual
+                const x = Math.sin(i * 999 + seed) * 10000;
+                return x - Math.floor(x);
+              };
+
+              // Zona central a evitar (onde ficam os cards): ~[320, 680]
+              // Geramos nós somente nas laterais esquerda e direita
+              const leftBand = { min: 30, max: 260 };
+              const rightBand = { min: 740, max: 970 };
+              type Node = { id: number; x: number; y: number; r: number; side: 'left' | 'right' };
+              const nodes: Node[] = Array.from({ length: 34 }).map((_, i) => {
+                const chooseLeft = pseudoRandom(i + 5) < 0.5;
+                const band = chooseLeft ? leftBand : rightBand;
+                return {
+                  id: i,
+                  x: band.min + pseudoRandom(i + 1) * (band.max - band.min),
+                  y: 40 + pseudoRandom(i + 2) * 520,
+                  r: 1.0 + pseudoRandom(i + 3) * 1.6,
+                  side: chooseLeft ? 'left' : 'right',
+                };
+              });
+
+              // Conexões somente dentro da mesma lateral para não atravessar o centro
+              const lines: Array<[number, number]> = [];
+              for (let i = 0; i < nodes.length; i++) {
+                for (let j = i + 1; j < nodes.length; j++) {
+                  if (nodes[i].side !== nodes[j].side) continue;
+                  const dx = nodes[i].x - nodes[j].x;
+                  const dy = nodes[i].y - nodes[j].y;
+                  const d2 = dx * dx + dy * dy;
+                  if (d2 < 140 * 140 && pseudoRandom(i * 37 + j * 17) < 0.28) {
+                    lines.push([i, j]);
+                  }
+                }
+              }
+
+              return (
+                <>
+                  {/* Conexões (axônios/dendritos) */}
+                  {lines.map(([a, b], idx) => (
+                    <g key={`g-${idx}`}>
+                      {/* Linha base sutil */}
+                      <motion.line
+                        x1={nodes[a].x}
+                        y1={nodes[a].y}
+                        x2={nodes[b].x}
+                        y2={nodes[b].y}
+                        stroke="currentColor"
+                        strokeWidth={0.6}
+                        strokeLinecap="round"
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 0.35 }}
+                        viewport={{ once: true }}
+                        animate={{ opacity: [0.2, 0.45, 0.2] }}
+                        transition={{ duration: 3.6 + (idx % 7) * 0.2, repeat: Infinity, ease: "easeInOut", delay: (idx % 5) * 0.3 }}
+                      />
+                      {/* Overlay tracejado que corre para simular sinal sináptico */}
+                      <motion.line
+                        x1={nodes[a].x}
+                        y1={nodes[a].y}
+                        x2={nodes[b].x}
+                        y2={nodes[b].y}
+                        stroke="currentColor"
+                        strokeWidth={1.0}
+                        strokeLinecap="round"
+                        strokeDasharray="12 18"
+                        initial={{ opacity: 0, strokeDashoffset: 0 }}
+                        whileInView={{ opacity: 0.6 }}
+                        viewport={{ once: true }}
+                        animate={{ strokeDashoffset: [-200, 0, -200] }}
+                        transition={{ duration: 5 + (idx % 5), repeat: Infinity, ease: "linear", delay: (idx % 7) * 0.2 }}
+                      />
+                    </g>
+                  ))}
+
+                  {/* Nós (neurônios) */}
+                  {nodes.map((n, idx) => (
+                    <g key={`n-${n.id}`}>
+                      {/* Corpo do neurônio */}
+                      <motion.circle
+                        cx={n.x}
+                        cy={n.y}
+                        r={n.r + 0.8}
+                        fill="currentColor"
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
+                        viewport={{ once: true }}
+                        animate={{ opacity: [0.4, 1, 0.4], scale: [1, 1.15, 1] }}
+                        transition={{ duration: 2.4 + (idx % 9) * 0.2, repeat: Infinity, ease: "easeInOut", delay: idx * 0.05 }}
+                      />
+                      {/* Onda de disparo (anel se expandindo) */}
+                      <motion.circle
+                        cx={n.x}
+                        cy={n.y}
+                        r={n.r + 3}
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth={0.8}
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        whileInView={{ opacity: 1 }}
+                        viewport={{ once: true }}
+                        animate={{ opacity: [0.0, 0.6, 0.0], scale: [0.8, 1.4, 0.8] }}
+                        transition={{ duration: 2.8 + (idx % 6) * 0.3, repeat: Infinity, ease: "easeInOut", delay: (idx % 10) * 0.12 }}
+                      />
+                    </g>
+                  ))}
+                </>
+              );
+            })()}
+          </motion.svg>
+        )}
+
+        <div className="max-w-7xl mx-auto relative z-10">
           <AnimatedText 
             text="Meus Projetos"
             className="text-3xl font-bold text-center text-slate-900 dark:text-white mb-12"
@@ -823,6 +1260,8 @@ export default function Home() {
                 variants={cardVariants}
                 whileHover="hover"
                 whileTap="tap"
+                layoutId={`card-${project.title}`}
+                style={{ borderRadius: 12 }}
                 onClick={() => openModal(project)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
@@ -841,11 +1280,13 @@ export default function Home() {
                 />
                                                 {project.images ? (
                   // Projetos com imagens (frontend)
-                  <div className={`${getImageContainerHeight(project.title)} relative overflow-hidden ${getImagePadding(project.title)}`}>
+                  <div className={`${getImageContainerHeight()} relative overflow-hidden ${getImagePadding()}`}>
                     <motion.div
                       className="relative w-full h-full"
                       variants={imageVariants}
                       whileHover="hover"
+                      layoutId={`image-${project.title}`}
+                      style={{ borderTopLeftRadius: 12, borderTopRightRadius: 12 }}
                     >
                       <ProjectCarousel images={project.images} title={project.title} />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
@@ -861,6 +1302,8 @@ export default function Home() {
                       className="relative w-full h-full flex flex-col justify-center items-center"
                       variants={imageVariants}
                       whileHover="hover"
+                      layoutId={`image-${project.title}`}
+                      style={{ borderTopLeftRadius: 12, borderTopRightRadius: 12 }}
                     >
                       {/* Efeito de Partículas de Código */}
                       {isClient && (
@@ -961,6 +1404,7 @@ export default function Home() {
                     className="text-xl font-semibold text-slate-900 dark:text-white mb-2"
                     whileHover={{ color: "#3b82f6" }}
                     transition={{ duration: 0.3 }}
+                    layoutId={`title-${project.title}`}
                   >
                     {project.title}
                   </motion.h3>
@@ -1396,7 +1840,7 @@ export default function Home() {
                     viewport={{ once: true }}
                     transition={{ delay: 0.5 }}
                   >
-                    {["React Native", "TypeScript", "C#", ".NET", "SQL Server", "APIs", "Performance"].map((skill, index) => (
+                    {["React Native", "TypeScript", "C#", ".NET", "SQL Server", "APIs"].map((skill, index) => (
                       <motion.span
                         key={index}
                         className="px-2 sm:px-3 py-0.5 sm:py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs rounded-full border border-blue-200 dark:border-blue-800"
@@ -1695,7 +2139,7 @@ export default function Home() {
       </motion.footer>
 
       {/* Modal */}
-      <AnimatePresence>
+      <AnimatePresence onExitComplete={() => setSelectedProject(null)}>
         {isModalOpen && selectedProject && (
           <motion.div
             className="fixed inset-0 z-50 flex items-center justify-center p-4"
@@ -1718,8 +2162,11 @@ export default function Home() {
             {/* Modal Content */}
             <motion.div
               ref={modalRef}
-              className="relative bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+              className="relative bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto overflow-x-hidden" 
+              layoutId={`card-${selectedProject.title}`}
+              style={{ borderRadius: 16 }}
               variants={modalVariants}
+              transition={sharedLayoutTransition.layout}
               tabIndex={-1}
               role="document"
             >
@@ -1743,13 +2190,13 @@ export default function Home() {
               {/* Project Image/Content */}
               {selectedProject.images ? (
                 // Projetos com imagens
-                <div className="relative h-96 overflow-hidden rounded-t-2xl">
+                <motion.div className="relative h-96 overflow-hidden rounded-t-2xl" layoutId={`image-${selectedProject.title}`} style={{ borderTopLeftRadius: 16, borderTopRightRadius: 16 }} transition={sharedLayoutTransition.layout}>
                   <ProjectCarousel images={selectedProject.images} title={selectedProject.title} />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
-                </div>
+                </motion.div>
               ) : (
                 // Projetos de IA sem imagens - Design criativo
-                <div className="relative h-96 overflow-hidden rounded-t-2xl bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+                <motion.div className="relative h-96 overflow-hidden rounded-t-2xl bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900" layoutId={`image-${selectedProject.title}`} style={{ borderTopLeftRadius: 16, borderTopRightRadius: 16 }} transition={sharedLayoutTransition.layout}>
                   {/* Efeito de Partículas de Código */}
                   {isClient && (
                     <motion.div
@@ -1852,7 +2299,7 @@ export default function Home() {
 
                   {/* Overlay Gradiente */}
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900/50 via-transparent to-transparent" />
-                </div>
+                </motion.div>
               )}
 
               {/* Project Content */}
@@ -1860,6 +2307,7 @@ export default function Home() {
                 <motion.h2 
                   id="modal-title"
                   className="text-3xl font-bold text-slate-900 dark:text-white mb-2"
+                  layoutId={`title-${selectedProject.title}`}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 }}
@@ -2008,6 +2456,204 @@ export default function Home() {
                     </motion.div>
                   )}
                 </motion.div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Skill Modal */}
+      <AnimatePresence>
+        {isSkillModalOpen && selectedSkill && (
+          <motion.div
+            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="skill-modal-title"
+            aria-describedby="skill-modal-description"
+          >
+            {/* Backdrop */}
+            <motion.div
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+              variants={backdropVariants}
+              onClick={closeSkillModal}
+              aria-hidden="true"
+            />
+
+            {/* Content */}
+            <motion.div
+              ref={skillModalRef}
+              className="relative bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-3xl w-full overflow-hidden"
+              variants={modalVariants}
+              tabIndex={-1}
+              role="document"
+            >
+              {/* Header visual */}
+              <div className={`relative h-40 bg-gradient-to-r ${getSkillGradient(selectedSkill.name)}`}>
+                {isClient && (
+                  <motion.div className="absolute inset-0 opacity-20">
+                    {getSkillParticles(selectedSkill.name).map((p, i) => (
+                      <motion.span
+                        key={`${p}-${i}`}
+                        className="absolute text-white/80 text-xs font-mono"
+                        style={{
+                          left: `${(i * 97) % 100}%`,
+                          top: `${(i * 37) % 100}%`,
+                        }}
+                        animate={{ y: [0, -12, 0], opacity: [0.2, 0.7, 0.2] }}
+                        transition={{ duration: 3 + i * 0.1, repeat: Infinity, ease: 'easeInOut' }}
+                      >
+                        {p}
+                      </motion.span>
+                    ))}
+                  </motion.div>
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+                <div className="absolute bottom-4 left-6 flex items-center gap-3 text-white">
+                  <selectedSkill.icon size={28} />
+                  <h3 id="skill-modal-title" className="text-2xl font-bold">
+                    {selectedSkill.name}
+                  </h3>
+                </div>
+                <motion.button
+                  ref={closeSkillButtonRef}
+                  className="absolute top-4 right-4 z-10 p-2 rounded-full bg-white/15 text-white hover:bg-white/25 transition-colors"
+                  onClick={closeSkillModal}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  aria-label="Fechar modal de skills"
+                >
+                  <FaTimes size={22} />
+                </motion.button>
+              </div>
+
+              {/* Body */}
+              <div className="p-6">
+                <p id="skill-modal-description" className="text-slate-600 dark:text-slate-300 mb-4">
+                  {getSkillTagline(selectedSkill.name)}
+                </p>
+                <div className="flex flex-wrap gap-2 mb-6">
+                  {selectedSkill.items.map((t, i) => (
+                    <motion.span
+                      key={`${t}-${i}`}
+                      className="px-4 py-2 rounded-full text-sm font-medium bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.1 * i }}
+                      whileHover={{ scale: 1.05 }}
+                    >
+                      {t}
+                    </motion.span>
+                  ))}
+                </div>
+
+                {/* Projetos Relacionados */}
+                <div className="mt-2">
+                  <h4 className="font-semibold text-slate-900 dark:text-white mb-3">Projetos Relacionados</h4>
+                  <div className="grid sm:grid-cols-3 gap-4">
+                    {getRelatedProjects(selectedSkill).map(({ project, overlap }, i) => (
+                      <motion.button
+                        key={project.title}
+                        onClick={() => {
+                          closeSkillModal();
+                          openModal(project);
+                        }}
+                        className="text-left rounded-xl overflow-hidden bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-blue-300 dark:hover:border-blue-700 transition-colors"
+                        initial={{ opacity: 0, y: 16 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 * i }}
+                        whileHover={{ y: -4, boxShadow: '0 10px 20px rgba(0,0,0,0.08)' }}
+                      >
+                        <div className="relative h-24 w-full">
+                          {getProjectPreviewImage(project) ? (
+                            <Image
+                              src={getProjectPreviewImage(project)!}
+                              alt={`Prévia do projeto ${project.title}`}
+                              fill
+                              sizes="(max-width: 640px) 100vw, 33vw"
+                              className="object-cover"
+                              placeholder="blur"
+                              blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
+                            />
+                          ) : (
+                            <div className="h-full w-full relative overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+                              {isClient && (
+                                <motion.div className="absolute inset-0 opacity-20">
+                                  {[
+                                    { left: 12, top: 20, text: '01' },
+                                    { left: 28, top: 35, text: '10' },
+                                    { left: 46, top: 25, text: 'API' },
+                                    { left: 64, top: 45, text: 'DB' },
+                                    { left: 78, top: 30, text: '{}' },
+                                    { left: 86, top: 55, text: '()' },
+                                  ].map((particle, j) => (
+                                    <motion.span
+                                      key={`mini-p-${particle.text}-${j}`}
+                                      className="absolute text-green-400/80 text-[10px] font-mono"
+                                      style={{ left: `${particle.left}%`, top: `${particle.top}%` }}
+                                      animate={{ y: [0, -8, 0], opacity: [0, 1, 0] }}
+                                      transition={{ duration: 3, delay: j * 0.15, repeat: Infinity, repeatDelay: 2 }}
+                                    >
+                                      {particle.text}
+                                    </motion.span>
+                                  ))}
+                                </motion.div>
+                              )}
+                              <div className="absolute inset-0 flex items-center justify-center">
+                                <div className="w-10 h-10 rounded-full bg-gradient-to-r from-green-500 to-blue-500 flex items-center justify-center shadow-inner">
+                                  <FaCode className="text-white" size={16} />
+                                </div>
+                              </div>
+                              <motion.div
+                                className="absolute inset-0 bg-gradient-to-r from-transparent via-green-400/10 to-transparent"
+                                initial={{ x: '-100%' }}
+                                animate={{ x: '100%' }}
+                                transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+                              />
+                            </div>
+                          )}
+                        </div>
+                        <div className="p-3">
+                          <div className="font-medium text-slate-900 dark:text-white line-clamp-2">{project.title}</div>
+                          <div className="mt-1 flex flex-wrap gap-1.5">
+                            {overlap.slice(0, 3).map((t) => (
+                              <span key={`${project.title}-${t}`} className="px-2 py-0.5 text-xs rounded-full bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200">
+                                {t}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      </motion.button>
+                    ))}
+                    {getRelatedProjects(selectedSkill).length === 0 && (
+                      <div className="sm:col-span-3 text-slate-600 dark:text-slate-300 text-sm">
+                        Nenhum projeto perfeitamente relacionado. Confira todos os projetos abaixo.
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="mt-6 flex flex-wrap gap-3">
+                  <motion.a
+                    href="#projects"
+                    className="px-5 py-2.5 rounded-lg text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 font-semibold"
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                  >
+                    Ver Projetos Relacionados
+                  </motion.a>
+                  <motion.button
+                    onClick={closeSkillModal}
+                    className="px-5 py-2.5 rounded-lg border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                  >
+                    Fechar
+                  </motion.button>
+                </div>
               </div>
             </motion.div>
           </motion.div>
