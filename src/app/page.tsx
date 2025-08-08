@@ -383,6 +383,7 @@ export default function Home() {
   const [selectedSkill, setSelectedSkill] = useState<Skill | null>(null);
   const [isSkillModalOpen, setIsSkillModalOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const skillModalRef = useRef<HTMLDivElement>(null);
@@ -392,6 +393,17 @@ export default function Home() {
     setIsClient(true);
     // Força a página a voltar ao topo quando carregada/atualizada
     window.scrollTo(0, 0);
+  }, []);
+
+  // Detectar viewport mobile para ajustar animações pesadas
+  useEffect(() => {
+    const checkIsMobile = () => {
+      if (typeof window === 'undefined') return;
+      setIsMobile(window.matchMedia('(max-width: 640px)').matches);
+    };
+    checkIsMobile();
+    window.addEventListener('resize', checkIsMobile);
+    return () => window.removeEventListener('resize', checkIsMobile);
   }, []);
 
   const projects: Project[] = [
@@ -673,6 +685,23 @@ export default function Home() {
     }
   };
 
+  // Variantes mais leves para mobile (sem springs pesados)
+  const modalVariantsMobile = {
+    hidden: { opacity: 0, y: 24, scale: 1 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: { duration: 0.22, ease: "easeOut" as const }
+    },
+    exit: {
+      opacity: 0,
+      y: 16,
+      scale: 1,
+      transition: { duration: 0.18, ease: "easeIn" as const }
+    }
+  } as const;
+
   const backdropVariants = {
     hidden: { opacity: 0 },
     visible: { 
@@ -690,6 +719,13 @@ export default function Home() {
       }
     }
   };
+
+  // Backdrop mais leve no mobile
+  const backdropVariantsMobile = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { duration: 0.2, ease: "easeOut" as const } },
+    exit: { opacity: 0, transition: { duration: 0.15, ease: "easeIn" as const } }
+  } as const;
 
   // Função para abrir modal
   const openModal = (project: Project) => {
@@ -2153,8 +2189,8 @@ export default function Home() {
           >
             {/* Backdrop */}
             <motion.div
-              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-              variants={backdropVariants}
+              className={`absolute inset-0 bg-black/60 ${isMobile ? '' : 'backdrop-blur-sm'}`}
+              variants={isMobile ? backdropVariantsMobile : backdropVariants}
               onClick={closeModal}
               aria-hidden="true"
             />
@@ -2163,10 +2199,10 @@ export default function Home() {
             <motion.div
               ref={modalRef}
               className="relative bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto overflow-x-hidden" 
-              layoutId={`card-${selectedProject.title}`}
+              layoutId={isMobile ? undefined : (`card-${selectedProject.title}` as const)}
               style={{ borderRadius: 16 }}
-              variants={modalVariants}
-              transition={sharedLayoutTransition.layout}
+              variants={isMobile ? modalVariantsMobile : modalVariants}
+              transition={isMobile ? undefined : sharedLayoutTransition.layout}
               tabIndex={-1}
               role="document"
             >
@@ -2190,13 +2226,13 @@ export default function Home() {
               {/* Project Image/Content */}
               {selectedProject.images ? (
                 // Projetos com imagens
-                <motion.div className="relative h-96 overflow-hidden rounded-t-2xl" layoutId={`image-${selectedProject.title}`} style={{ borderTopLeftRadius: 16, borderTopRightRadius: 16 }} transition={sharedLayoutTransition.layout}>
+                <motion.div className="relative h-96 overflow-hidden rounded-t-2xl" layoutId={isMobile ? undefined : (`image-${selectedProject.title}` as const)} style={{ borderTopLeftRadius: 16, borderTopRightRadius: 16 }} transition={isMobile ? undefined : sharedLayoutTransition.layout}>
                   <ProjectCarousel images={selectedProject.images} title={selectedProject.title} />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
                 </motion.div>
               ) : (
                 // Projetos de IA sem imagens - Design criativo
-                <motion.div className="relative h-96 overflow-hidden rounded-t-2xl bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900" layoutId={`image-${selectedProject.title}`} style={{ borderTopLeftRadius: 16, borderTopRightRadius: 16 }} transition={sharedLayoutTransition.layout}>
+                <motion.div className="relative h-96 overflow-hidden rounded-t-2xl bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900" layoutId={isMobile ? undefined : (`image-${selectedProject.title}` as const)} style={{ borderTopLeftRadius: 16, borderTopRightRadius: 16 }} transition={isMobile ? undefined : sharedLayoutTransition.layout}>
                   {/* Efeito de Partículas de Código */}
                   {isClient && (
                     <motion.div
