@@ -2157,7 +2157,9 @@ export default function Home() {
               {/* Close Button */}
               <motion.button
                 ref={closeButtonRef}
-                className="absolute top-4 right-4 z-10 p-2 rounded-full bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 transition-colors"
+                className="absolute top-4 right-4 z-10 rounded-full transition-colors
+                p-3 bg-slate-900/90 text-white shadow-lg ring-1 ring-white/50 hover:bg-slate-800/90 dark:bg-white/95 dark:text-slate-900 dark:ring-slate-900/20 dark:hover:bg-white
+                sm:p-2 sm:bg-white/10 sm:text-white sm:shadow-none sm:ring-0 sm:hover:bg-white/20 sm:backdrop-blur-sm sm:dark:bg-white/10 sm:dark:text-white sm:dark:hover:bg-white/20"
                 onClick={closeModal}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
@@ -2168,7 +2170,7 @@ export default function Home() {
                   }
                 }}
               >
-                <FaTimes size={24} />
+                <FaTimes className="h-7 w-7 sm:h-6 sm:w-6" />
               </motion.button>
 
               {/* Project Image/Content */}
