@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { FaGithub, FaLinkedin, FaEnvelope, FaCode, FaPalette, FaDatabase, FaServer, FaTimes, FaExternalLinkAlt, FaReact, FaNodeJs, FaPython, FaHtml5, FaCss3Alt, FaJs, FaGitAlt } from "react-icons/fa";
 import type { IconType } from "react-icons";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
 
 type Project = {
@@ -384,15 +384,29 @@ export default function Home() {
   const [selectedSkill, setSelectedSkill] = useState<Skill | null>(null);
   const [isSkillModalOpen, setIsSkillModalOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const skillModalRef = useRef<HTMLDivElement>(null);
   const closeSkillButtonRef = useRef<HTMLButtonElement>(null);
+  const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
     setIsClient(true);
     // Força a página a voltar ao topo quando carregada/atualizada
     window.scrollTo(0, 0);
+    // Detecta mobile e observa mudanças de tamanho
+    const mql = window.matchMedia('(max-width: 640px)');
+    const update = () => setIsMobile(mql.matches);
+    update();
+    try {
+      mql.addEventListener('change', update);
+      return () => mql.removeEventListener('change', update);
+    } catch {
+      // Safari
+      mql.addListener(update);
+      return () => mql.removeListener(update);
+    }
   }, []);
 
   const projects: Project[] = [
@@ -665,6 +679,26 @@ export default function Home() {
         ease: "easeIn" as const
       }
     }
+  };
+
+  const modalVariantsMobile = {
+    hidden: { opacity: 0, y: 24 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.25, ease: "easeOut" as const }
+    },
+    exit: {
+      opacity: 0,
+      y: 24,
+      transition: { duration: 0.2, ease: "easeIn" as const }
+    }
+  };
+
+  const modalVariantsReduced = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { duration: 0.1 } },
+    exit: { opacity: 0, transition: { duration: 0.1 } }
   };
 
   const backdropVariants = {
@@ -2140,7 +2174,7 @@ export default function Home() {
           >
             {/* Backdrop */}
             <motion.div
-              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+              className={`absolute inset-0 bg-black/60 ${isMobile ? '' : 'backdrop-blur-sm'}`}
               variants={backdropVariants}
               onClick={closeModal}
               aria-hidden="true"
@@ -2149,8 +2183,8 @@ export default function Home() {
             {/* Modal Content */}
             <motion.div
               ref={modalRef}
-              className="relative bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[calc(100dvh-2rem)] overflow-y-auto overflow-x-hidden"
-              variants={modalVariants}
+              className="relative bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[calc(100dvh-2rem)] overflow-y-auto overflow-x-hidden will-change-transform will-change-opacity"
+              variants={prefersReducedMotion ? modalVariantsReduced : (isMobile ? modalVariantsMobile : modalVariants)}
               tabIndex={-1}
               role="document"
             >
@@ -2462,7 +2496,7 @@ export default function Home() {
           >
             {/* Backdrop */}
             <motion.div
-              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+              className={`absolute inset-0 bg-black/60 ${isMobile ? '' : 'backdrop-blur-sm'}`}
               variants={backdropVariants}
               onClick={closeSkillModal}
               aria-hidden="true"
@@ -2471,8 +2505,8 @@ export default function Home() {
             {/* Content */}
             <motion.div
               ref={skillModalRef}
-              className="relative bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-3xl w-full max-h-[calc(100dvh-2rem)] overflow-y-auto overflow-x-hidden"
-              variants={modalVariants}
+              className="relative bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-3xl w-full max-h-[calc(100dvh-2rem)] overflow-y-auto overflow-x-hidden will-change-transform will-change-opacity"
+              variants={prefersReducedMotion ? modalVariantsReduced : (isMobile ? modalVariantsMobile : modalVariants)}
               tabIndex={-1}
               role="document"
             >
