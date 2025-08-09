@@ -1,4 +1,5 @@
 "use client";
+
 import Image from "next/image";
 import { FaGithub, FaLinkedin, FaEnvelope, FaCode, FaPalette, FaDatabase, FaServer, FaTimes, FaExternalLinkAlt, FaReact, FaNodeJs, FaPython, FaHtml5, FaCss3Alt, FaJs, FaGitAlt } from "react-icons/fa";
 import type { IconType } from "react-icons";
@@ -2128,7 +2129,7 @@ export default function Home() {
       <AnimatePresence>
         {isModalOpen && selectedProject && (
           <motion.div
-            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center px-4 pt-[max(env(safe-area-inset-top),1rem)] pb-[max(env(safe-area-inset-bottom),1rem)] min-h-[100dvh]"
             initial="hidden"
             animate="visible"
             exit="exit"
@@ -2148,7 +2149,7 @@ export default function Home() {
             {/* Modal Content */}
             <motion.div
               ref={modalRef}
-              className="relative bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+              className="relative bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[calc(100dvh-2rem)] overflow-y-auto"
               variants={modalVariants}
               tabIndex={-1}
               role="document"
@@ -2448,7 +2449,7 @@ export default function Home() {
       <AnimatePresence>
         {isSkillModalOpen && selectedSkill && (
           <motion.div
-            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center px-4 pt-[max(env(safe-area-inset-top),1rem)] pb-[max(env(safe-area-inset-bottom),1rem)] min-h-[100dvh]"
             initial="hidden"
             animate="visible"
             exit="exit"
@@ -2468,7 +2469,7 @@ export default function Home() {
             {/* Content */}
             <motion.div
               ref={skillModalRef}
-              className="relative bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-3xl w-full overflow-hidden"
+              className="relative bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-3xl w-full max-h-[calc(100dvh-2rem)] overflow-y-auto"
               variants={modalVariants}
               tabIndex={-1}
               role="document"
