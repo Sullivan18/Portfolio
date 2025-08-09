@@ -2149,7 +2149,7 @@ export default function Home() {
             {/* Modal Content */}
             <motion.div
               ref={modalRef}
-              className="relative bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[calc(100dvh-2rem)] overflow-y-auto"
+              className="relative bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[calc(100dvh-2rem)] overflow-y-auto overflow-x-hidden"
               variants={modalVariants}
               tabIndex={-1}
               role="document"
@@ -2469,7 +2469,7 @@ export default function Home() {
             {/* Content */}
             <motion.div
               ref={skillModalRef}
-              className="relative bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-3xl w-full max-h-[calc(100dvh-2rem)] overflow-y-auto"
+              className="relative bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-3xl w-full max-h-[calc(100dvh-2rem)] overflow-y-auto overflow-x-hidden"
               variants={modalVariants}
               tabIndex={-1}
               role="document"
