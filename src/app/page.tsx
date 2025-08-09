@@ -14,6 +14,7 @@ type Project = {
   image?: string;
   github?: string | null;
   live?: string;
+  aiDetailsPath?: string;
 };
 
 type Skill = {
@@ -472,7 +473,8 @@ export default function Home() {
       tech: ["Python", "React", "Keras", "TensorFlow", "JavaScript"],
       image: "/projects/dog-detection/dog-detection.jpg",
       github: "https://github.com/Sullivan18/MyPet",
-      live: undefined // Projeto de IA sem demo
+      live: undefined, // Projeto de IA sem demo
+      aiDetailsPath: "/ai/sarna"
     }
   ];
 
@@ -1228,41 +1230,7 @@ export default function Home() {
                     />
                   ))}
 
-                  {/* Meteoros sutis somente nas laterais */}
-                  {/* Esquerda */}
-                  <motion.rect
-                    x={leftBand.min + 20}
-                    y={-40}
-                    width={80}
-                    height={1.4}
-                    fill="url(#grad)"
-                    rx={1}
-                    transform="rotate(18 0 0)"
-                    initial={{ opacity: 0 }}
-                    animate={{ y: [ -40, 640, 640 ], opacity: [0, 1, 0] }}
-                    transition={{ duration: 7, repeat: Infinity, ease: "easeOut", delay: 0.8 }}
-                  />
-                  {/* Direita */}
-                  <motion.rect
-                    x={rightBand.max - 120}
-                    y={640}
-                    width={80}
-                    height={1.4}
-                    fill="url(#grad)"
-                    rx={1}
-                    transform="rotate(-18 0 0)"
-                    initial={{ opacity: 0 }}
-                    animate={{ y: [ 640, -40, -40 ], opacity: [0, 1, 0] }}
-                    transition={{ duration: 8, repeat: Infinity, ease: "easeOut", delay: 1.6 }}
-                  />
-
-                  <defs>
-                    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" stopColor="rgba(255,255,255,0)" />
-                      <stop offset="40%" stopColor="rgba(255,255,255,0.8)" />
-                      <stop offset="100%" stopColor="rgba(255,255,255,0)" />
-                    </linearGradient>
-                  </defs>
+                  {/* (Meteoros removidos) */}
                 </>
               );
             })()}
@@ -2408,6 +2376,18 @@ export default function Home() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.6 }}
                 >
+                  {selectedProject.aiDetailsPath && (
+                    <motion.a
+                      href={selectedProject.aiDetailsPath}
+                      className="flex items-center justify-center space-x-2 bg-gradient-to-r from-emerald-600 to-teal-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-emerald-700 hover:to-teal-700 transition-colors"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <FaCode size={20} />
+                      <span>Detalhes da IA</span>
+                    </motion.a>
+                  )}
                                       {selectedProject.github ? (
                       <motion.a
                         href="https://github.com/Sullivan18"
