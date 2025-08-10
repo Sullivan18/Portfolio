@@ -4,6 +4,7 @@ import Image from "next/image";
 import { FaGithub, FaLinkedin, FaEnvelope, FaCode, FaPalette, FaDatabase, FaServer, FaTimes, FaExternalLinkAlt, FaReact, FaNodeJs, FaPython, FaHtml5, FaCss3Alt, FaJs, FaGitAlt } from "react-icons/fa";
 import type { IconType } from "react-icons";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import type { PanInfo } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
 
 type Project = {
@@ -708,16 +709,16 @@ export default function Home() {
   };
 
   const modalVariantsMobile = {
-    hidden: { opacity: 0, y: 24 },
+    hidden: { opacity: 0, y: "100%" },
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.25, ease: "easeOut" as const }
+      transition: { type: "spring" as const, stiffness: 380, damping: 32 }
     },
     exit: {
       opacity: 0,
-      y: 24,
-      transition: { duration: 0.2, ease: "easeIn" as const }
+      y: "100%",
+      transition: { duration: 0.22, ease: "easeIn" as const }
     }
   };
 
@@ -2179,6 +2180,15 @@ export default function Home() {
               variants={prefersReducedMotion ? modalVariantsReduced : (isMobile ? modalVariantsMobile : modalVariants)}
               tabIndex={-1}
               role="document"
+              drag={isMobile ? "y" : false}
+              dragConstraints={{ top: 0, bottom: 0 }}
+              dragElastic={0.2}
+              onDragEnd={(e, info: PanInfo) => {
+                if (!isMobile) return;
+                if (info.offset.y > 120 || info.velocity.y > 800) {
+                  closeModal();
+                }
+              }}
             >
               {/* Close Button */}
               <motion.button
@@ -2513,6 +2523,15 @@ export default function Home() {
               variants={prefersReducedMotion ? modalVariantsReduced : (isMobile ? modalVariantsMobile : modalVariants)}
               tabIndex={-1}
               role="document"
+              drag={isMobile ? "y" : false}
+              dragConstraints={{ top: 0, bottom: 0 }}
+              dragElastic={0.2}
+              onDragEnd={(e, info: PanInfo) => {
+                if (!isMobile) return;
+                if (info.offset.y > 120 || info.velocity.y > 800) {
+                  closeSkillModal();
+                }
+              }}
             >
               {/* Header visual */}
               <div className={`relative h-40 bg-gradient-to-r ${getSkillGradient(selectedSkill.name)}`}>
