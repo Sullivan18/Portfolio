@@ -24,7 +24,11 @@ type Skill = {
 };
 
 // Fundo criativo e animado para o Hero (com z-index controlado)
-const HeroBackground = () => {
+const HeroBackground = ({ isMobile, prefersReducedMotion }: { isMobile: boolean; prefersReducedMotion: boolean }) => {
+  // Em mobile ou quando o usuário prefere menos movimento, não renderizamos o fundo animado
+  if (isMobile || prefersReducedMotion) {
+    return null;
+  }
   const bokehDots: Array<{ x: string; y: string; size: number; delay: number }> = [
     { x: "12%", y: "30%", size: 14, delay: 0.2 },
     { x: "28%", y: "72%", size: 18, delay: 0.4 },
@@ -247,25 +251,26 @@ const HeroBackground = () => {
 };
 
 // Componente do Carrossel de Projetos
-const ProjectCarousel = ({ images, title }: { images: string[]; title: string }) => {
+const ProjectCarousel = ({ images, title, isMobile = false, prefersReducedMotion = false }: { images: string[]; title: string; isMobile?: boolean; prefersReducedMotion?: boolean }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [direction, setDirection] = useState(1); // 1 = direita, -1 = esquerda
 
   useEffect(() => {
+    if (isMobile || prefersReducedMotion) return; // sem autoplay no mobile/menos movimento
     const interval = setInterval(() => {
       setCurrentImageIndex((prevIndex) => {
         const nextIndex = prevIndex + 1;
         if (nextIndex >= images.length) {
-          setDirection(-1); // Muda direção para esquerda
-          return 0; // Volta ao primeiro
+          setDirection(-1);
+          return 0;
         }
-        setDirection(1); // Mantém direção para direita
+        setDirection(1);
         return nextIndex;
       });
-    }, 3000); // Troca a cada 3 segundos
+    }, 3000);
 
     return () => clearInterval(interval);
-  }, [images.length]);
+  }, [images.length, isMobile, prefersReducedMotion]);
 
   // Descrições alternativas detalhadas para cada projeto
   const getAltText = (imageIndex: number, projectTitle: string) => {
@@ -306,6 +311,25 @@ const ProjectCarousel = ({ images, title }: { images: string[]; title: string })
     return "object-cover";
   };
 
+  // Em mobile ou com redução de movimento, renderiza apenas a primeira imagem (sem animações pesadas)
+  if (isMobile || prefersReducedMotion) {
+    return (
+      <div className="relative w-full h-full overflow-hidden" role="region" aria-label={`Imagem do projeto ${title}`}>
+        <Image
+          src={images[0]}
+          alt={getAltText(0, title)}
+          fill
+          className={getImageObjectFit(title)}
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          quality={60}
+          priority={false}
+          placeholder="blur"
+          blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
+        />
+      </div>
+    );
+  }
+
   return (
     <div 
       className="relative w-full h-full overflow-hidden"
@@ -340,7 +364,7 @@ const ProjectCarousel = ({ images, title }: { images: string[]; title: string })
             className={getImageObjectFit(title)}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             priority={currentImageIndex === 0}
-            quality={85}
+            quality={80}
             placeholder="blur"
             blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
           />
@@ -926,7 +950,7 @@ export default function Home() {
 
       {/* Hero Section */}
       <section id="home" className="relative overflow-hidden pt-20 pb-16 px-4 sm:px-6 lg:px-8">
-        <HeroBackground />
+        <HeroBackground isMobile={isMobile} prefersReducedMotion={!!prefersReducedMotion} />
         <div className="max-w-6xl mx-auto">
           <motion.div 
             className="text-center relative z-10"
@@ -953,7 +977,7 @@ export default function Home() {
                     className="object-cover"
                     sizes="(max-width: 768px) 128px, 128px"
                     priority
-                    quality={90}
+                    quality={80}
                     placeholder="blur"
                     blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
                   />
@@ -1148,7 +1172,7 @@ export default function Home() {
       {/* Projects Section */}
       <section id="projects" className="py-16 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
         {/* Fundo animado: Constelação em SVG */}
-        {isClient && (
+        {isClient && !isMobile && !prefersReducedMotion && (
           <motion.svg
             className="absolute inset-0 w-full h-full text-slate-400/40 dark:text-slate-300/30"
             viewBox="0 0 1000 600"
@@ -1280,7 +1304,7 @@ export default function Home() {
                       variants={imageVariants}
                       whileHover="hover"
                     >
-                      <ProjectCarousel images={project.images} title={project.title} />
+                      <ProjectCarousel images={project.images} title={project.title} isMobile={isMobile} prefersReducedMotion={!!prefersReducedMotion} />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
                       <div className="absolute bottom-4 left-4 text-white">
                         <h4 className="text-lg font-semibold">{project.title}</h4>
@@ -1296,7 +1320,7 @@ export default function Home() {
                       whileHover="hover"
                     >
                       {/* Efeito de Partículas de Código */}
-                      {isClient && (
+                      {isClient && !isMobile && !prefersReducedMotion && (
                         <motion.div
                           className="absolute inset-0 opacity-20"
                           initial={{ opacity: 0 }}
@@ -1509,7 +1533,7 @@ export default function Home() {
       {/* Experience Section */}
       <section id="experience" className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 relative overflow-hidden">
         {/* Floating Particles Background */}
-        {isClient && (
+        {isClient && !isMobile && !prefersReducedMotion && (
           <motion.div className="absolute inset-0 pointer-events-none">
             {[...Array(8)].map((_, i) => (
               <motion.div
@@ -2179,14 +2203,14 @@ export default function Home() {
               {selectedProject.images ? (
                 // Projetos com imagens
                 <div className="relative h-96 overflow-hidden rounded-t-2xl">
-                  <ProjectCarousel images={selectedProject.images} title={selectedProject.title} />
+                  <ProjectCarousel images={selectedProject.images} title={selectedProject.title} isMobile={isMobile} prefersReducedMotion={!!prefersReducedMotion} />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
                 </div>
               ) : (
                 // Projetos de IA sem imagens - Design criativo
                 <div className="relative h-96 overflow-hidden rounded-t-2xl bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
                   {/* Efeito de Partículas de Código */}
-                  {isClient && (
+                  {isClient && !isMobile && !prefersReducedMotion && (
                     <motion.div
                       className="absolute inset-0 opacity-30"
                       initial={{ opacity: 0 }}
@@ -2579,7 +2603,7 @@ export default function Home() {
                             />
                           ) : (
                             <div className="h-full w-full relative overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-                              {isClient && (
+                              {isClient && !isMobile && !prefersReducedMotion && (
                                 <motion.div className="absolute inset-0 opacity-20">
                                   {[
                                     { left: 12, top: 20, text: '01' },
