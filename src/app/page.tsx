@@ -490,7 +490,8 @@ export default function Home() {
       tech: ["React", "Python", "TensorFlow", "JavaScript", "Transformers"],
       image: "/projects/sentiment-analysis/sentiment-analysis.jpg",
       github: "https://github.com/Sullivan18/SentimentDash",
-      live: undefined // Projeto de IA sem demo
+      live: undefined, // Projeto de IA sem demo
+      aiDetailsPath: "/ai/sentimentos"
     },
     {
       title: "Detecção de Sarna em Cachorros - IA",
@@ -1307,6 +1308,15 @@ export default function Home() {
                     >
                       <ProjectCarousel images={project.images} title={project.title} isMobile={isMobile} prefersReducedMotion={!!prefersReducedMotion} />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                      {project.aiDetailsPath && (
+                        <a
+                          href={project.aiDetailsPath}
+                          className="absolute top-3 right-3 px-3 py-1 rounded-md bg-emerald-600 text-white text-xs font-semibold hover:bg-emerald-700 shadow"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          Detalhes da IA
+                        </a>
+                      )}
                       <div className="absolute bottom-4 left-4 text-white">
                         <h4 className="text-lg font-semibold">{project.title}</h4>
                       </div>
@@ -1315,6 +1325,15 @@ export default function Home() {
                 ) : (
                   // Projetos sem imagens (backend) - Design diferenciado
                   <div className="h-56 md:h-64 lg:h-72 xl:h-80 relative overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6">
+                    {project.aiDetailsPath && (
+                      <a
+                        href={project.aiDetailsPath}
+                        className="absolute top-3 right-3 px-3 py-1 rounded-md bg-emerald-600 text-white text-xs font-semibold hover:bg-emerald-700 shadow"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        Detalhes da IA
+                      </a>
+                    )}
                     <motion.div
                       className="relative w-full h-full flex flex-col justify-center items-center"
                       variants={imageVariants}
