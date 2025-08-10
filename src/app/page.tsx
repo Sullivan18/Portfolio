@@ -2176,20 +2176,27 @@ export default function Home() {
             {/* Modal Content */}
             <motion.div
               ref={modalRef}
-              className="relative bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[calc(100dvh-2rem)] overflow-y-auto overflow-x-hidden will-change-transform will-change-opacity"
+              className="relative bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[calc(100dvh-2rem)] overflow-y-auto overflow-x-hidden will-change-transform will-change-opacity touch-pan-y overscroll-contain"
               variants={prefersReducedMotion ? modalVariantsReduced : (isMobile ? modalVariantsMobile : modalVariants)}
               tabIndex={-1}
               role="document"
-              drag={isMobile ? "y" : false}
-              dragConstraints={{ top: 0, bottom: 0 }}
-              dragElastic={0.2}
-              onDragEnd={(e, info: PanInfo) => {
-                if (!isMobile) return;
-                if (info.offset.y > 120 || info.velocity.y > 800) {
-                  closeModal();
-                }
-              }}
             >
+              {isMobile && (
+                <div className="sticky top-0 z-20 flex justify-center pt-2 pb-1 bg-transparent">
+                  <motion.div
+                    className="h-1.5 w-12 bg-slate-300/70 dark:bg-slate-600/70 rounded-full"
+                    drag="y"
+                    dragConstraints={{ top: 0, bottom: 0 }}
+                    dragElastic={0.2}
+                    dragMomentum={false}
+                    onDragEnd={(e, info: PanInfo) => {
+                      if (info.offset.y > 120 || info.velocity.y > 800) {
+                        closeModal();
+                      }
+                    }}
+                  />
+                </div>
+              )}
               {/* Close Button */}
               <motion.button
                 ref={closeButtonRef}
@@ -2519,20 +2526,27 @@ export default function Home() {
             {/* Content */}
             <motion.div
               ref={skillModalRef}
-              className="relative bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-3xl w-full max-h-[calc(100dvh-2rem)] overflow-y-auto overflow-x-hidden will-change-transform will-change-opacity"
+              className="relative bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-3xl w-full max-h-[calc(100dvh-2rem)] overflow-y-auto overflow-x-hidden will-change-transform will-change-opacity touch-pan-y overscroll-contain"
               variants={prefersReducedMotion ? modalVariantsReduced : (isMobile ? modalVariantsMobile : modalVariants)}
               tabIndex={-1}
               role="document"
-              drag={isMobile ? "y" : false}
-              dragConstraints={{ top: 0, bottom: 0 }}
-              dragElastic={0.2}
-              onDragEnd={(e, info: PanInfo) => {
-                if (!isMobile) return;
-                if (info.offset.y > 120 || info.velocity.y > 800) {
-                  closeSkillModal();
-                }
-              }}
             >
+              {isMobile && (
+                <div className="sticky top-0 z-20 flex justify-center pt-2 pb-1 bg-transparent">
+                  <motion.div
+                    className="h-1.5 w-12 bg-slate-300/70 dark:bg-slate-600/70 rounded-full"
+                    drag="y"
+                    dragConstraints={{ top: 0, bottom: 0 }}
+                    dragElastic={0.2}
+                    dragMomentum={false}
+                    onDragEnd={(e, info: PanInfo) => {
+                      if (info.offset.y > 120 || info.velocity.y > 800) {
+                        closeSkillModal();
+                      }
+                    }}
+                  />
+                </div>
+              )}
               {/* Header visual */}
               <div className={`relative h-40 bg-gradient-to-r ${getSkillGradient(selectedSkill.name)}`}>
                 {isClient && (
