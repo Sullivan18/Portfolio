@@ -1,9 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import { FaGithub, FaLinkedin, FaEnvelope, FaCode, FaPalette, FaDatabase, FaServer, FaTimes, FaExternalLinkAlt, FaReact, FaNodeJs, FaPython, FaHtml5, FaCss3Alt, FaJs, FaGitAlt, FaArrowLeft } from "react-icons/fa";
+import { FaGithub, FaLinkedin, FaEnvelope, FaCode, FaPalette, FaDatabase, FaServer, FaTimes, FaExternalLinkAlt, FaReact, FaNodeJs, FaPython, FaHtml5, FaCss3Alt, FaJs, FaGitAlt, FaArrowLeft, FaBars } from "react-icons/fa";
 import type { IconType } from "react-icons";
-import { motion, AnimatePresence, useReducedMotion, useDragControls } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion, useDragControls, useScroll, useSpring } from "framer-motion";
 import type { PanInfo } from "framer-motion";
 import { useState, useEffect, useRef, useMemo, memo } from "react";
 
@@ -25,9 +25,9 @@ type Skill = {
 };
 
 // Fundo criativo e animado para o Hero (com z-index controlado)
-const HeroBackground = ({ isMobile, prefersReducedMotion }: { isMobile: boolean; prefersReducedMotion: boolean }) => {
-  // Em mobile ou quando o usuário prefere menos movimento, não renderizamos o fundo animado
-  if (isMobile || prefersReducedMotion) {
+// Ativo também em mobile (mantém respeito a prefersReducedMotion)
+const HeroBackground = ({ isMobile: _isMobile, prefersReducedMotion }: { isMobile: boolean; prefersReducedMotion: boolean }) => {
+  if (prefersReducedMotion) {
     return null;
   }
   const bokehDots: Array<{ x: string; y: string; size: number; delay: number }> = [
@@ -866,6 +866,101 @@ export default function Home() {
   });
   AnimatedText.displayName = "AnimatedText";
 
+  // Navbar interativa
+  const InteractiveNavbar = () => {
+    const { scrollYProgress } = useScroll();
+    const scaleX = useSpring(scrollYProgress, { stiffness: 180, damping: 30, mass: 0.4 });
+    const [open, setOpen] = useState(false);
+    const sections = [
+      { text: "Início", href: "#home" },
+      { text: "Sobre", href: "#about" },
+      { text: "Projetos", href: "#projects" },
+      { text: "Experiência", href: "#experience" },
+      { text: "Contato", href: "#contact" }
+    ];
+
+    useEffect(() => {
+      const onResize = () => {
+        if (window.innerWidth >= 768) setOpen(false);
+      };
+      window.addEventListener('resize', onResize);
+      return () => window.removeEventListener('resize', onResize);
+    }, []);
+
+    return (
+      <nav className="fixed top-0 w-full z-50">
+        {/* Barra de fundo */}
+        <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border-b border-slate-200 dark:border-slate-700">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center h-16">
+              <a href="#home" className="text-xl font-bold text-slate-900 dark:text-white">André Luiz</a>
+              {/* Desktop */}
+              <div className="hidden md:flex items-center gap-6">
+                {sections.map((item) => (
+                  <a
+                    key={item.text}
+                    href={item.href}
+                    className="text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors relative"
+                  >
+                    <span>{item.text}</span>
+                    <span className="absolute -bottom-1 left-0 h-0.5 w-0 bg-blue-500 transition-all duration-300 group-hover:w-full" />
+                  </a>
+                ))}
+                <a
+                  href="https://github.com/Sullivan18"
+                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-slate-900 text-white dark:bg-slate-700 hover:bg-slate-800 dark:hover:bg-slate-600 transition-colors"
+                >
+                  <FaGithub />
+                  <span className="hidden sm:inline">GitHub</span>
+                </a>
+              </div>
+              {/* Mobile */}
+              <button
+                className="md:hidden inline-flex items-center justify-center h-10 w-10 rounded-md text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
+                onClick={() => setOpen((v) => !v)}
+                aria-label="Abrir navegação"
+              >
+                <FaBars />
+              </button>
+            </div>
+          </div>
+        </div>
+        {/* Indicador de progresso de scroll */}
+        <motion.div style={{ scaleX }} className="origin-left h-1 bg-gradient-to-r from-blue-500 to-purple-600" />
+
+        {/* Drawer Mobile */}
+        <AnimatePresence>
+          {open && (
+            <motion.div
+              initial={{ y: -20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: -10, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="md:hidden bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm border-b border-slate-200 dark:border-slate-700"
+            >
+              <div className="max-w-6xl mx-auto px-4 py-3 space-y-1">
+                {sections.map((item) => (
+                  <a
+                    key={item.text}
+                    href={item.href}
+                    onClick={() => setOpen(false)}
+                    className="block px-3 py-2 rounded-md text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >
+                    {item.text}
+                  </a>
+                ))}
+                <div className="pt-2 flex gap-3">
+                  <a href="mailto:andre.sullivan18@hotmail.com" className="text-slate-700 dark:text-slate-200 hover:underline">Email</a>
+                  <a href="https://www.linkedin.com/in/andré-luiz-081432275/" className="text-slate-700 dark:text-slate-200 hover:underline">LinkedIn</a>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </nav>
+    );
+  };
+
   // Função para determinar a altura do container baseada no projeto
   const getImageContainerHeight = () => {
     // Altura flexível para todos os projetos, permitindo que as imagens se ajustem naturalmente
@@ -980,57 +1075,8 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
-      {/* Header/Navigation */}
-      <motion.nav 
-        initial={{ y: -100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-        className="fixed top-0 w-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm z-50 border-b border-slate-200 dark:border-slate-700"
-      >
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <motion.div 
-              className="text-xl font-bold text-slate-900 dark:text-white"
-              whileHover={{ scale: 1.05, rotate: 2 }}
-              whileTap={{ scale: 0.95, rotate: -2 }}
-              transition={{ duration: 0.2 }}
-            >
-              André Luiz
-            </motion.div>
-            <div className="hidden md:flex space-x-8">
-              {[
-                { text: "Início", href: "#home" },
-                { text: "Sobre", href: "#about" },
-                { text: "Projetos", href: "#projects" },
-                { text: "Experiência", href: "#experience" },
-                { text: "Contato", href: "#contact" }
-              ].map((item, index) => (
-                <motion.a
-                  key={item.text}
-                  href={item.href}
-                  className="text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors relative overflow-hidden"
-                  whileHover={{ 
-                    scale: 1.1, 
-                    y: -2,
-                    color: "#3b82f6"
-                  }}
-                  whileTap={{ scale: 0.9 }}
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                >
-                  <motion.span
-                    className="absolute bottom-0 left-0 w-0 h-0.5 bg-blue-500"
-                    whileHover={{ width: "100%" }}
-                    transition={{ duration: 0.3 }}
-                  />
-                  {item.text}
-                </motion.a>
-              ))}
-            </div>
-          </div>
-        </div>
-      </motion.nav>
+      {/* Header/Navigation – Interativa e Criativa */}
+      <InteractiveNavbar />
 
       {/* Hero Section */}
       <section id="home" className="relative overflow-hidden pt-20 pb-16 px-4 sm:px-6 lg:px-8">
