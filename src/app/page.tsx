@@ -2262,6 +2262,18 @@ export default function Home() {
               onClick={() => closeModal()}
               aria-hidden="true"
             />
+
+            {/* Botão fixo no canto superior esquerdo (fora do conteúdo rolável) */}
+            <motion.button
+              ref={closeButtonRef}
+              className="fixed left-4 top-[max(env(safe-area-inset-top),1rem)] z-[60] rounded-full p-2 bg-white/90 text-slate-900 shadow-md ring-1 ring-slate-200 backdrop-blur-md dark:bg-slate-800/90 dark:text-white dark:ring-slate-700"
+              onClick={() => closeModal()}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              aria-label="Fechar modal"
+            >
+              <FaArrowLeft className="h-5 w-5" />
+            </motion.button>
             
             {/* Modal Content */}
             <motion.div
@@ -2287,18 +2299,6 @@ export default function Home() {
                   />
                 </div>
               )}
-              {/* Botão fixo no canto superior esquerdo (todas as plataformas) */}
-              <motion.button
-                ref={closeButtonRef}
-                className="fixed left-4 top-[max(env(safe-area-inset-top),1rem)] z-[60] rounded-full p-2 bg-white/90 text-slate-900 shadow-md ring-1 ring-slate-200 backdrop-blur-md dark:bg-slate-800/90 dark:text-white dark:ring-slate-700"
-                  onClick={() => closeModal()}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                aria-label="Fechar modal"
-              >
-                <FaArrowLeft className="h-5 w-5" />
-              </motion.button>
-
               {/* Project Image/Content */}
               {selectedProject.images ? (
                 // Projetos com imagens
@@ -2642,6 +2642,18 @@ export default function Home() {
               aria-hidden="true"
             />
 
+            {/* Botão fixo no canto superior esquerdo (fora do conteúdo rolável) – Skills */}
+            <motion.button
+              ref={closeSkillButtonRef}
+              className="fixed left-4 top-[max(env(safe-area-inset-top),1rem)] z-[60] rounded-full p-2 bg-white/90 text-slate-900 shadow-md ring-1 ring-slate-200 backdrop-blur-md dark:bg-slate-800/90 dark:text-white dark:ring-slate-700"
+              onClick={() => closeSkillModal()}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              aria-label="Fechar modal de skills"
+            >
+              <FaArrowLeft className="h-5 w-5" />
+            </motion.button>
+
             {/* Content */}
             <motion.div
               ref={skillModalRef}
@@ -2693,17 +2705,7 @@ export default function Home() {
                     {selectedSkill.name}
                   </h3>
                 </div>
-              {/* Botão fixo no canto superior esquerdo (skills) */}
-              <motion.button
-                ref={closeSkillButtonRef}
-                className="fixed left-4 top-[max(env(safe-area-inset-top),1rem)] z-[60] rounded-full p-2 bg-white/90 text-slate-900 shadow-md ring-1 ring-slate-200 backdrop-blur-md dark:bg-slate-800/90 dark:text-white dark:ring-slate-700"
-                  onClick={() => closeSkillModal()}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                aria-label="Fechar modal de skills"
-              >
-                <FaArrowLeft className="h-5 w-5" />
-              </motion.button>
+              
               </div>
 
               {/* Body */}
