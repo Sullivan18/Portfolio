@@ -1,9 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import { FaGithub, FaLinkedin, FaEnvelope, FaCode, FaPalette, FaDatabase, FaServer, FaTimes, FaExternalLinkAlt, FaReact, FaNodeJs, FaPython, FaHtml5, FaCss3Alt, FaJs, FaGitAlt } from "react-icons/fa";
+import { FaGithub, FaLinkedin, FaEnvelope, FaCode, FaPalette, FaDatabase, FaServer, FaTimes, FaExternalLinkAlt, FaReact, FaNodeJs, FaPython, FaHtml5, FaCss3Alt, FaJs, FaGitAlt, FaArrowLeft } from "react-icons/fa";
 import type { IconType } from "react-icons";
-import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion, useDragControls } from "framer-motion";
 import type { PanInfo } from "framer-motion";
 import { useState, useEffect, useRef, useMemo, memo } from "react";
 
@@ -2310,9 +2310,14 @@ export default function Home() {
         transition={{ duration: 0.6 }}
       >
         <div className="max-w-6xl mx-auto text-center">
-          <p className="text-slate-400">
-            © 2025 André Luiz. Todos os direitos reservados.
-          </p>
+          <div className="text-slate-400 space-y-2">
+            <p>
+              Feito com ❤️ usando Next.js, TypeScript, Tailwind CSS e Framer Motion.
+            </p>
+            <p className="text-slate-500">
+              Implantado na Vercel · <a href="https://github.com/Sullivan18" className="underline decoration-slate-600 hover:text-slate-300 transition-colors">GitHub</a>
+            </p>
+          </div>
         </div>
       </motion.footer>
 
@@ -2361,23 +2366,16 @@ export default function Home() {
                   />
                 </div>
               )}
-              {/* Close Button */}
+              {/* Botão fixo no canto superior esquerdo (todas as plataformas) */}
               <motion.button
                 ref={closeButtonRef}
-                className="absolute top-4 right-4 z-10 rounded-full transition-colors
-                p-3 bg-slate-900/90 text-white shadow-lg ring-1 ring-white/50 hover:bg-slate-800/90 dark:bg-white/95 dark:text-slate-900 dark:ring-slate-900/20 dark:hover:bg-white
-                sm:p-2 sm:bg-white/10 sm:text-white sm:shadow-none sm:ring-0 sm:hover:bg-white/20 sm:backdrop-blur-sm sm:dark:bg-white/10 sm:dark:text-white sm:dark:hover:bg-white/20"
+                className="fixed left-4 top-[max(env(safe-area-inset-top),1rem)] z-[60] rounded-full p-2 bg-white/90 text-slate-900 shadow-md ring-1 ring-slate-200 backdrop-blur-md dark:bg-slate-800/90 dark:text-white dark:ring-slate-700"
                 onClick={closeModal}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 aria-label="Fechar modal"
-                onKeyDown={(e) => {
-                  if (e.key === 'Escape') {
-                    closeModal();
-                  }
-                }}
               >
-                <FaTimes className="h-7 w-7 sm:h-6 sm:w-6" />
+                <FaArrowLeft className="h-5 w-5" />
               </motion.button>
 
               {/* Project Image/Content */}
@@ -2774,16 +2772,17 @@ export default function Home() {
                     {selectedSkill.name}
                   </h3>
                 </div>
-                <motion.button
-                  ref={closeSkillButtonRef}
-                  className="absolute top-4 right-4 z-10 p-2 rounded-full bg-white/15 text-white hover:bg-white/25 transition-colors"
-                  onClick={closeSkillModal}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  aria-label="Fechar modal de skills"
-                >
-                  <FaTimes size={22} />
-                </motion.button>
+              {/* Botão fixo no canto superior esquerdo (skills) */}
+              <motion.button
+                ref={closeSkillButtonRef}
+                className="fixed left-4 top-[max(env(safe-area-inset-top),1rem)] z-[60] rounded-full p-2 bg-white/90 text-slate-900 shadow-md ring-1 ring-slate-200 backdrop-blur-md dark:bg-slate-800/90 dark:text-white dark:ring-slate-700"
+                onClick={closeSkillModal}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                aria-label="Fechar modal de skills"
+              >
+                <FaArrowLeft className="h-5 w-5" />
+              </motion.button>
               </div>
 
               {/* Body */}
