@@ -51,179 +51,23 @@ const HeroBackground = ({ isMobile: _isMobile, prefersReducedMotion }: { isMobil
     { x: "60%", y: "12%", delay: 0.2, size: 18, color: "text-rose-300/80", type: 'git' },
     { x: "84%", y: "66%", delay: 1.4, size: 20, color: "text-green-300/80", type: 'node' },
     { x: "42%", y: "18%", delay: 0.9, size: 20, color: "text-indigo-300/80", type: 'python' },
+    // Extras
+    { x: "6%", y: "22%", delay: 0.5, size: 16, color: "text-blue-200/80", type: 'react' },
+    { x: "90%", y: "36%", delay: 1.0, size: 16, color: "text-yellow-200/80", type: 'js' },
+    { x: "12%", y: "82%", delay: 0.7, size: 18, color: "text-emerald-200/80", type: 'db' },
+    { x: "52%", y: "10%", delay: 1.3, size: 14, color: "text-sky-200/80", type: 'css' },
+    { x: "30%", y: "12%", delay: 0.9, size: 16, color: "text-orange-200/80", type: 'html' },
+    { x: "70%", y: "82%", delay: 1.1, size: 18, color: "text-rose-200/80", type: 'git' },
+    { x: "22%", y: "38%", delay: 0.4, size: 16, color: "text-green-200/80", type: 'node' },
+    { x: "76%", y: "14%", delay: 0.8, size: 16, color: "text-indigo-200/80", type: 'python' },
+    { x: "46%", y: "72%", delay: 1.2, size: 18, color: "text-fuchsia-200/80", type: 'palette' },
+    { x: "58%", y: "46%", delay: 0.6, size: 16, color: "text-cyan-200/80", type: 'code' },
+    { x: "8%", y: "64%", delay: 1.4, size: 14, color: "text-emerald-300/70", type: 'server' },
+    { x: "92%", y: "72%", delay: 0.7, size: 16, color: "text-blue-300/70", type: 'react' },
   ];
 
   return (
     <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
-      {/* Grid sutil */}
-      <motion.div
-        className="absolute inset-0"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 0.12 }}
-        transition={{ duration: 1.2 }}
-        style={{
-          backgroundImage: "radial-gradient(rgba(100,116,139,0.55) 1px, transparent 1px)",
-          backgroundSize: "22px 22px",
-          backgroundPosition: "0 0",
-        }}
-      />
-
-      {/* (Aurora bands removidos) */}
-
-      {/* Blobs principais com blur forte */}
-      <motion.div
-        className="absolute -top-40 -left-32 w-[36rem] h-[36rem] rounded-full blur-3xl"
-        initial={{ scale: 0.95, rotate: -12 }}
-        animate={{
-          scale: [0.95, 1.05, 0.95],
-          rotate: [-12, 12, -12],
-          x: [0, 18, 0],
-          y: [0, -26, 0],
-        }}
-        transition={{ duration: 10, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" }}
-        style={{
-          background:
-            "radial-gradient(closest-side, rgba(59,130,246,0.40), rgba(147,51,234,0.25) 60%, transparent 70%)",
-        }}
-      />
-      <motion.div
-        className="absolute -bottom-48 -right-24 w-[32rem] h-[32rem] rounded-full blur-3xl"
-        initial={{ scale: 0.96, rotate: 10 }}
-        animate={{
-          scale: [1.02, 0.92, 1.02],
-          rotate: [10, -10, 10],
-          x: [0, -22, 0],
-          y: [0, 18, 0],
-        }}
-        transition={{ duration: 12, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" }}
-        style={{
-          background:
-            "radial-gradient(closest-side, rgba(16,185,129,0.30), rgba(59,130,246,0.20) 60%, transparent 70%)",
-        }}
-      />
-
-      {/* Bokeh dots */}
-      {bokehDots.map((pos, i) => (
-        <motion.div
-          key={`bokeh-${i}`}
-          className="absolute rounded-full bg-white/30 dark:bg-white/20"
-          style={{ left: pos.x, top: pos.y, width: pos.size, height: pos.size, filter: "blur(2px)" }}
-          animate={{ opacity: [0.25, 0.6, 0.25], y: [0, -6, 0] }}
-          transition={{ duration: 3 + i * 0.4, delay: pos.delay, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" }}
-        />
-      ))}
-
-      {/* Tokens de código flutuando */}
-      {[
-        { text: '{ }', x: '6%', y: '40%', d: 6 },
-        { text: '()=>', x: '16%', y: '26%', d: 7 },
-        { text: '<div/>', x: '28%', y: '62%', d: 6.5 },
-        { text: 'const', x: '42%', y: '18%', d: 6.8 },
-        { text: 'return', x: '56%', y: '30%', d: 7.2 },
-        { text: 'async', x: '64%', y: '66%', d: 6.2 },
-        { text: 'await', x: '78%', y: '42%', d: 6.9 },
-        { text: '</>', x: '90%', y: '70%', d: 6.4 },
-      ].map((t, ti) => (
-        <motion.span
-          key={`token-${ti}`}
-          className="absolute font-mono text-xs md:text-sm text-slate-600/70 dark:text-slate-300/60"
-          style={{ left: t.x, top: t.y }}
-          animate={{ y: [0, -8, 0], opacity: [0.4, 0.85, 0.4] }}
-          transition={{ duration: t.d, delay: ti * 0.15, repeat: Infinity, ease: 'easeInOut' }}
-        >
-          {t.text}
-        </motion.span>
-      ))}
-
-      {/* Code Rain (leve) */}
-      <div className="absolute inset-0">
-        {[
-          { left: '8%' }, { left: '22%' }, { left: '36%' }, { left: '50%' }, { left: '64%' }, { left: '78%' }, { left: '88%' }
-        ].map((col, ci) => (
-          <motion.div
-            key={`coderain-${ci}`}
-            className="absolute top-[-120%] h-[220%] w-6 md:w-8"
-            style={{ left: col.left }}
-            initial={{ y: '-10%' }}
-            animate={{ y: '10%' }}
-            transition={{ duration: 10 + ci * 1.5, repeat: Infinity, repeatType: 'mirror', ease: 'linear', delay: ci * 0.6 }}
-          >
-            {Array.from({ length: 18 }).map((_, ri) => (
-              <span
-                key={`rain-ch-${ci}-${ri}`}
-                className="block font-mono text-[10px] md:text-xs leading-4 text-emerald-300/60"
-                style={{ opacity: (ri % 6) / 6 + 0.2 }}
-              >
-                {['0','1','{','}','<','>','/','(',')','=','>'][ri % 10]}
-              </span>
-            ))}
-          </motion.div>
-        ))}
-      </div>
-
-      
-
-      {/* Cursor piscando */}
-      <motion.span
-        className="absolute left-1/2 top-[58%] -translate-x-1/2 w-3 h-4 bg-slate-400/60 rounded-sm"
-        animate={{ opacity: [0, 1, 0] }}
-        transition={{ duration: 1, repeat: Infinity }}
-      />
-
-      {/* Orbitas sutis no centro */}
-      <motion.div
-        className="absolute left-1/2 top-1/2"
-        style={{ transform: "translate(-50%, -50%)" }}
-        animate={{ rotate: 360 }}
-        transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
-      >
-        {[
-          { radius: 140, size: 6, opacity: 0.18 },
-          { radius: 100, size: 5, opacity: 0.16 },
-          { radius: 70, size: 4, opacity: 0.14 },
-        ].map((ring, ri) => (
-          [0, 60, 120, 180, 240, 300].map((deg, di) => (
-            <motion.span
-              key={`orb-${ri}-${di}`}
-              className="absolute rounded-full bg-white"
-              style={{
-                width: ring.size,
-                height: ring.size,
-                left: "50%",
-                top: "50%",
-                opacity: ring.opacity,
-                transform: `translate(-50%, -50%) rotate(${deg}deg) translateX(${ring.radius}px)`,
-                filter: "blur(1px)",
-              }}
-              animate={{ opacity: [ring.opacity * 0.7, ring.opacity, ring.opacity * 0.7] }}
-              transition={{ duration: 3 + di * 0.2, repeat: Infinity, ease: "easeInOut" }}
-            />
-          ))
-        ))}
-      </motion.div>
-
-      {/* Sparkles (estrelas piscando) */}
-      {[
-        { x: "8%", y: "18%", d: 1.8 },
-        { x: "22%", y: "12%", d: 2.2 },
-        { x: "46%", y: "8%", d: 2.0 },
-        { x: "70%", y: "14%", d: 2.4 },
-        { x: "90%", y: "26%", d: 2.1 },
-        { x: "6%", y: "64%", d: 2.3 },
-        { x: "32%", y: "86%", d: 2.6 },
-        { x: "60%", y: "78%", d: 2.2 },
-        { x: "86%", y: "68%", d: 2.5 },
-      ].map((s, si) => (
-        <motion.span
-          key={`spark-${si}`}
-          className="absolute block bg-white rounded-full"
-          style={{ left: s.x, top: s.y, width: 2, height: 2, filter: "blur(0.5px)" }}
-          animate={{ opacity: [0.2, 0.8, 0.2], scale: [1, 1.4, 1] }}
-          transition={{ duration: s.d, delay: si * 0.15, repeat: Infinity, ease: "easeInOut" }}
-        />
-      ))}
-
-      {/* Ícones flutuantes de tech */}
       {techFloaters.map((f, i) => (
         <motion.div
           key={`float-${i}`}
@@ -245,8 +89,6 @@ const HeroBackground = ({ isMobile: _isMobile, prefersReducedMotion }: { isMobil
           {f.type === 'python' && <FaPython size={f.size} />}
         </motion.div>
       ))}
-
-      {/* (Efeito de varredura removido) */}
     </div>
   );
 };
@@ -416,6 +258,7 @@ export default function Home() {
   const skillModalRef = useRef<HTMLDivElement>(null);
   const closeSkillButtonRef = useRef<HTMLButtonElement>(null);
   const prefersReducedMotion = useReducedMotion();
+  const modalHistoryRef = useRef<{ project: number; skill: number }>({ project: 0, skill: 0 });
 
   // Estado do formulário de contato
   const [contactName, setContactName] = useState("");
@@ -811,6 +654,10 @@ export default function Home() {
   const openModal = (project: Project) => {
     setSelectedProject(project);
     setIsModalOpen(true);
+    try {
+      window.history.pushState({ modal: 'project' }, '');
+      modalHistoryRef.current.project += 1;
+    } catch {}
     // Foco no modal após a animação
     setTimeout(() => {
       modalRef.current?.focus();
@@ -818,7 +665,13 @@ export default function Home() {
   };
 
   // Função para fechar modal
-  const closeModal = () => {
+  const closeModal = (fromPopState?: boolean) => {
+    // Se o fechamento veio do usuário (botão, backdrop), voltamos o histórico primeiro
+    if (!fromPopState && modalHistoryRef.current.project > 0) {
+      modalHistoryRef.current.project -= 1;
+      window.history.back();
+      return;
+    }
     setIsModalOpen(false);
     setTimeout(() => setSelectedProject(null), 300);
   };
@@ -827,12 +680,21 @@ export default function Home() {
   const openSkillModal = (skill: Skill) => {
     setSelectedSkill(skill);
     setIsSkillModalOpen(true);
+    try {
+      window.history.pushState({ modal: 'skill' }, '');
+      modalHistoryRef.current.skill += 1;
+    } catch {}
     setTimeout(() => {
       skillModalRef.current?.focus();
     }, 100);
   };
 
-  const closeSkillModal = () => {
+  const closeSkillModal = (fromPopState?: boolean) => {
+    if (!fromPopState && modalHistoryRef.current.skill > 0) {
+      modalHistoryRef.current.skill -= 1;
+      window.history.back();
+      return;
+    }
     setIsSkillModalOpen(false);
     setTimeout(() => setSelectedSkill(null), 300);
   };
@@ -858,6 +720,19 @@ export default function Home() {
       document.removeEventListener('keydown', handleEscape);
       document.body.style.overflow = 'unset';
     };
+  }, [isModalOpen, isSkillModalOpen]);
+
+  // Fechar modal ao usar o botão voltar do navegador (mobile/desktop)
+  useEffect(() => {
+    const onPopState = () => {
+      if (isModalOpen) {
+        closeModal(true);
+      } else if (isSkillModalOpen) {
+        closeSkillModal(true);
+      }
+    };
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
   }, [isModalOpen, isSkillModalOpen]);
 
   // Título sem animações (substitui a versão animada letra a letra)
@@ -2384,7 +2259,7 @@ export default function Home() {
             <motion.div
               className={`absolute inset-0 bg-black/60 ${isMobile ? '' : 'backdrop-blur-sm'}`}
               variants={backdropVariants}
-              onClick={closeModal}
+              onClick={() => closeModal()}
               aria-hidden="true"
             />
             
@@ -2416,7 +2291,7 @@ export default function Home() {
               <motion.button
                 ref={closeButtonRef}
                 className="fixed left-4 top-[max(env(safe-area-inset-top),1rem)] z-[60] rounded-full p-2 bg-white/90 text-slate-900 shadow-md ring-1 ring-slate-200 backdrop-blur-md dark:bg-slate-800/90 dark:text-white dark:ring-slate-700"
-                onClick={closeModal}
+                  onClick={() => closeModal()}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 aria-label="Fechar modal"
@@ -2763,7 +2638,7 @@ export default function Home() {
             <motion.div
               className={`absolute inset-0 bg-black/60 ${isMobile ? '' : 'backdrop-blur-sm'}`}
               variants={backdropVariants}
-              onClick={closeSkillModal}
+              onClick={() => closeSkillModal()}
               aria-hidden="true"
             />
 
@@ -2822,7 +2697,7 @@ export default function Home() {
               <motion.button
                 ref={closeSkillButtonRef}
                 className="fixed left-4 top-[max(env(safe-area-inset-top),1rem)] z-[60] rounded-full p-2 bg-white/90 text-slate-900 shadow-md ring-1 ring-slate-200 backdrop-blur-md dark:bg-slate-800/90 dark:text-white dark:ring-slate-700"
-                onClick={closeSkillModal}
+                  onClick={() => closeSkillModal()}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 aria-label="Fechar modal de skills"
@@ -2947,7 +2822,7 @@ export default function Home() {
                     Ver Projetos Relacionados
                   </motion.a>
                   <motion.button
-                    onClick={closeSkillModal}
+                    onClick={() => closeSkillModal()}
                     className="px-5 py-2.5 rounded-lg border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.97 }}
