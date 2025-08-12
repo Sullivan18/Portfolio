@@ -251,13 +251,26 @@ const HeroBackground = ({ isMobile, prefersReducedMotion }: { isMobile: boolean;
   );
 };
 
-// Componente do Carrossel de Projetos
-const ProjectCarousel = ({ images, title, isMobile = false, prefersReducedMotion = false }: { images: string[]; title: string; isMobile?: boolean; prefersReducedMotion?: boolean }) => {
+// Componente de Imagem Estática do Projeto (sempre mostra a primeira imagem)
+const ProjectCarousel = ({
+  images,
+  title,
+  isMobile: _isMobile = false,
+  prefersReducedMotion: _prefersReducedMotion = false,
+  enableCarousel = false,
+}: {
+  images: string[];
+  title: string;
+  isMobile?: boolean;
+  prefersReducedMotion?: boolean;
+  enableCarousel?: boolean;
+}) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [direction, setDirection] = useState(1); // 1 = direita, -1 = esquerda
+  const [direction, setDirection] = useState(1);
 
   useEffect(() => {
-    if (isMobile || prefersReducedMotion) return; // sem autoplay no mobile/menos movimento
+    if (!enableCarousel) return;
+    if (_isMobile || _prefersReducedMotion) return;
     const interval = setInterval(() => {
       setCurrentImageIndex((prevIndex) => {
         const nextIndex = prevIndex + 1;
@@ -269,61 +282,62 @@ const ProjectCarousel = ({ images, title, isMobile = false, prefersReducedMotion
         return nextIndex;
       });
     }, 3000);
-
     return () => clearInterval(interval);
-  }, [images.length, isMobile, prefersReducedMotion]);
-
+  }, [enableCarousel, images.length, _isMobile, _prefersReducedMotion]);
   // Descrições alternativas detalhadas para cada projeto
   const getAltText = (imageIndex: number, projectTitle: string) => {
     const descriptions = {
       "Ludare - Rede Social": [
         "Screenshot 1: Interface principal do aplicativo Ludare mostrando o feed de posts com design moderno e cores vibrantes",
         "Screenshot 2: Tela de perfil do usuário com informações pessoais, posts e estatísticas de engajamento",
-        "Screenshot 3: Tela de criação de post com editor de texto e opções de mídia"
+        "Screenshot 3: Tela de criação de post com editor de texto e opções de mídia",
       ],
       "Modern Clinic Website": [
         "Screenshot 1: Página inicial do site da clínica com hero section, informações de contato e design responsivo",
         "Screenshot 2: Seção de serviços médicos com cards informativos e botões de agendamento",
-        "Screenshot 3: Formulário de contato integrado com validação e campos para nome, email e mensagem"
+        "Screenshot 3: Formulário de contato integrado com validação e campos para nome, email e mensagem",
       ],
       "Restaurante - Website": [
         "Screenshot 1: Página inicial do website do restaurante com menu principal, hero section e design atrativo",
         "Screenshot 2: Seção de cardápio com pratos organizados, preços e sistema de pedidos",
-        "Screenshot 3: Interface de pedidos online com carrinho de compras e integração com API"
+        "Screenshot 3: Interface de pedidos online com carrinho de compras e integração com API",
       ],
       "Quick Time Event Master": [
         "Screenshot 1: Página principal do website de jogos com navegação, hero section e call-to-action",
         "Screenshot 2: Seção de produtos/serviços com cards de jogos e informações detalhadas",
-        "Screenshot 3: Integração de mapa interativo mostrando localização da empresa ou eventos"
-      ]
-    };
+        "Screenshot 3: Integração de mapa interativo mostrando localização da empresa ou eventos",
+      ],
+    } as const;
 
-    return descriptions[projectTitle as keyof typeof descriptions]?.[imageIndex] || 
-           `Screenshot ${imageIndex + 1} do projeto ${projectTitle}`;
+    return (
+      descriptions[projectTitle as keyof typeof descriptions]?.[imageIndex] ||
+      `Screenshot ${imageIndex + 1} do projeto ${projectTitle}`
+    );
   };
 
-  // Função para determinar o object-fit baseado no projeto
+  // Define object-fit baseado no projeto
   const getImageObjectFit = (projectTitle: string) => {
-    // Para o Ludare (imagem vertical), usar object-contain para manter proporções
     if (projectTitle.includes("Ludare")) {
       return "object-contain";
     }
-    // Para projetos horizontais, usar object-cover para preencher melhor
     return "object-cover";
   };
 
-  // Em mobile ou com redução de movimento, renderiza apenas a primeira imagem (sem animações pesadas)
-  if (isMobile || prefersReducedMotion) {
+  if (!enableCarousel) {
     return (
-      <div className="relative w-full h-full overflow-hidden" role="region" aria-label={`Imagem do projeto ${title}`}>
+      <div
+        className="relative w-full h-full overflow-hidden"
+        role="region"
+        aria-label={`Imagem do projeto ${title}`}
+      >
         <Image
           src={images[0]}
           alt={getAltText(0, title)}
           fill
           className={getImageObjectFit(title)}
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          quality={60}
           priority={false}
+          quality={80}
           placeholder="blur"
           blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
         />
@@ -340,22 +354,10 @@ const ProjectCarousel = ({ images, title, isMobile = false, prefersReducedMotion
       <AnimatePresence mode="wait">
         <motion.div
           key={currentImageIndex}
-          initial={{ 
-            x: direction * 300, // Entra da direita ou esquerda
-            opacity: 0 
-          }}
-          animate={{ 
-            x: 0, // Posição central
-            opacity: 1 
-          }}
-          exit={{ 
-            x: -direction * 300, // Sai para a esquerda ou direita
-            opacity: 0 
-          }}
-          transition={{ 
-            duration: 0.6, 
-            ease: "easeInOut" as const
-          }}
+          initial={{ x: direction * 300, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          exit={{ x: -direction * 300, opacity: 0 }}
+          transition={{ duration: 0.6, ease: "easeInOut" as const }}
           className="absolute inset-0"
         >
           <Image
@@ -371,8 +373,7 @@ const ProjectCarousel = ({ images, title, isMobile = false, prefersReducedMotion
           />
         </motion.div>
       </AnimatePresence>
-      
-      {/* Indicadores */}
+
       <div 
         className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-1"
         role="tablist"
@@ -381,9 +382,7 @@ const ProjectCarousel = ({ images, title, isMobile = false, prefersReducedMotion
         {images.map((_, index) => (
           <motion.div
             key={index}
-            className={`w-2 h-2 rounded-full cursor-pointer ${
-              index === currentImageIndex ? 'bg-white' : 'bg-white/50'
-            }`}
+            className={`w-2 h-2 rounded-full cursor-pointer ${index === currentImageIndex ? 'bg-white' : 'bg-white/50'}`}
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ delay: index * 0.1 }}
@@ -397,6 +396,7 @@ const ProjectCarousel = ({ images, title, isMobile = false, prefersReducedMotion
                 setCurrentImageIndex(index);
               }
             }}
+            onClick={() => setCurrentImageIndex(index)}
           />
         ))}
       </div>
@@ -491,7 +491,7 @@ export default function Home() {
         "/projects/ludare/ludare_3.jpg"
       ],
       github: null, // Código privado
-      live: "https://ludare.com"
+      live: "https://play.google.com/store/apps/details?id=com.ludare.followmme&hl=pt"
     },
     {
       title: "Modern Clinic Website",
@@ -622,6 +622,23 @@ export default function Home() {
         duration: 0.1
       }
     }
+  };
+
+  // Variantes mais suaves para os cards de Projetos (efeito mais amigável)
+  const projectCardVariants = {
+    hidden: { scale: 0.96, opacity: 0, y: 24 },
+    visible: {
+      scale: 1,
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.5, ease: "easeOut" as const },
+    },
+    hover: {
+      scale: 1.02,
+      y: -6,
+      boxShadow: "0 12px 24px rgba(0,0,0,0.08)",
+      transition: { duration: 0.25, ease: "easeInOut" as const },
+    },
   };
 
   const skillCardVariants = {
@@ -843,29 +860,9 @@ export default function Home() {
     };
   }, [isModalOpen, isSkillModalOpen]);
 
-  // Função para animar texto letra por letra (memoizada para não reiniciar em re-render)
+  // Título sem animações (substitui a versão animada letra a letra)
   const AnimatedText = memo(({ text, className }: { text: string; className: string }) => {
-    const letters = useMemo(() => text.split(""), [text]);
-    return (
-      <motion.h2
-        className={className}
-        variants={titleVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
-      >
-        {letters.map((letter, index) => (
-          <motion.span
-            key={index}
-            variants={letterVariants}
-            style={{ display: "inline-block" }}
-            transition={{ delay: index * 0.05 }}
-          >
-            {letter === " " ? "\u00A0" : letter}
-          </motion.span>
-        ))}
-      </motion.h2>
-    );
+    return <h2 className={className}>{text}</h2>;
   });
   AnimatedText.displayName = "AnimatedText";
 
@@ -941,6 +938,44 @@ export default function Home() {
   const getProjectPreviewImage = (project: Project): string | null => {
     // Usa somente imagens que sabemos existir sob /public
     return project.images?.[0] ?? null;
+  };
+
+  // Insights exclusivos do modal (apresentados em cartões curtos e objetivos)
+  type ProjectInsight = { label: string; text: string; icon: string };
+  const getProjectInsights = (projectTitle: string): ProjectInsight[] => {
+    const map: Record<string, ProjectInsight[]> = {
+      "Ludare - Rede Social": [
+        { label: "Objetivo", text: "Experiência social rápida e estável para mobile.", icon: "⚡" },
+        { label: "Desafio", text: "Escalabilidade e integrações em C#/.NET.", icon: "🧩" },
+        { label: "Resultado", text: "Latência reduzida e APIs mais seguras.", icon: "✅" },
+      ],
+      "Modern Clinic Website": [
+        { label: "Conversão", text: "Captura de leads com UX clara e validações.", icon: "🎯" },
+        { label: "Acessibilidade", text: "Interações suaves e conteúdo legível.", icon: "♿" },
+        { label: "Integração", text: "Google Maps e modo escuro responsivo.", icon: "🗺️" },
+      ],
+      "Restaurante - Website": [
+        { label: "Pedidos", text: "Carrinho e checkout integrados à API.", icon: "🛒" },
+        { label: "Mobile-first", text: "Layout fluido e rápido no celular.", icon: "📱" },
+        { label: "Conteúdo", text: "Cardápio organizado focado em conversão.", icon: "🍽️" },
+      ],
+      "Quick Time Event Master": [
+        { label: "Mapa", text: "Experiência interativa com React‑Leaflet.", icon: "🗺️" },
+        { label: "Confiabilidade", text: "reCAPTCHA e monitoramento (Analytics).", icon: "🔒" },
+        { label: "Performance", text: "Ajustes de renderização e cargas.", icon: "🚀" },
+      ],
+      "Análise de Sentimentos - Twitter": [
+        { label: "Coleta", text: "Pipeline com Selenium para dados reais.", icon: "🧪" },
+        { label: "NLP", text: "Transformers/TensorFlow para sentimentos.", icon: "🤖" },
+        { label: "Insights", text: "Dashboard para decisões rápidas.", icon: "📊" },
+      ],
+      "Detecção de Sarna em Cachorros - IA": [
+        { label: "Modelo", text: "CNN com TensorFlow/Keras para imagens.", icon: "🧠" },
+        { label: "Pipeline", text: "Upload, pré‑processamento e API.", icon: "🧰" },
+        { label: "Qualidade", text: "Métricas e validação do modelo.", icon: "📈" },
+      ],
+    };
+    return map[projectTitle] ?? [];
   };
 
   return (
@@ -1034,11 +1069,8 @@ export default function Home() {
                 </motion.div>
               </div>
             </motion.div>
-            <motion.h1 
+            <h1 
               className="text-4xl sm:text-6xl font-bold text-slate-900 dark:text-white mb-6"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5, duration: 0.8 }}
             >
               Olá, eu sou{" "}
               <motion.span 
@@ -1054,7 +1086,7 @@ export default function Home() {
               >
                 André Luiz
               </motion.span>
-            </motion.h1>
+            </h1>
             <motion.p 
               className="text-xl text-slate-600 dark:text-slate-300 mb-8 max-w-2xl mx-auto"
               initial={{ opacity: 0, y: 30 }}
@@ -1175,7 +1207,6 @@ export default function Home() {
                   className="bg-slate-50 dark:bg-slate-800 p-6 rounded-lg relative overflow-hidden cursor-pointer"
                   variants={skillCardVariants}
                   whileHover="hover"
-                  whileTap="tap"
                   onClick={() => openSkillModal(skill)}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
@@ -1325,10 +1356,9 @@ export default function Home() {
             {projects.map((project, index) => (
               <motion.div
                 key={index}
-                className="bg-white dark:bg-slate-900 rounded-lg overflow-hidden shadow-lg relative group w-full cursor-pointer"
-                variants={cardVariants}
+                className="bg-white dark:bg-slate-900 rounded-2xl overflow-hidden shadow-md hover:shadow-xl border border-slate-200/60 dark:border-slate-800/60 relative group w-full cursor-pointer transition-shadow"
+                variants={projectCardVariants}
                 whileHover="hover"
-                whileTap="tap"
                 onClick={() => openModal(project)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
@@ -1341,7 +1371,7 @@ export default function Home() {
                 aria-label={`Ver detalhes do projeto ${project.title}`}
               >
                 <motion.div
-                  className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-purple-500/20 opacity-0"
+                  className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10 opacity-0"
                   whileHover={{ opacity: 1 }}
                   transition={{ duration: 0.3 }}
                 />
@@ -1349,7 +1379,7 @@ export default function Home() {
                   // Projetos com imagens (frontend)
                   <div className={`${getImageContainerHeight()} relative overflow-hidden ${getImagePadding()}`}>
                     <motion.div
-                      className="relative w-full h-full"
+                      className="relative w-full h-full rounded-xl overflow-hidden"
                       variants={imageVariants}
                       whileHover="hover"
                     >
@@ -1364,14 +1394,14 @@ export default function Home() {
                           Detalhes da IA
                         </a>
                       )}
-                      <div className="absolute bottom-4 left-4 text-white">
-                        <h4 className="text-lg font-semibold">{project.title}</h4>
+                      <div className="absolute bottom-4 left-4 right-4 text-white">
+                        <h4 className="text-lg font-semibold drop-shadow-md">{project.title}</h4>
                       </div>
                     </motion.div>
                   </div>
                 ) : (
                   // Projetos sem imagens (backend) - Design diferenciado
-                  <div className="h-56 md:h-64 lg:h-72 xl:h-80 relative overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6">
+                  <div className="h-56 md:h-64 lg:h-72 xl:h-80 relative overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6 rounded-xl border border-slate-800/60">
                     {project.aiDetailsPath && (
                       <a
                         href={project.aiDetailsPath}
@@ -1382,7 +1412,7 @@ export default function Home() {
                       </a>
                     )}
                     <motion.div
-                      className="relative w-full h-full flex flex-col justify-center items-center"
+                      className="relative w-full h-full flex flex-col justify-center items-center rounded-lg overflow-hidden"
                       variants={imageVariants}
                       whileHover="hover"
                     >
@@ -1449,15 +1479,11 @@ export default function Home() {
                       </motion.div>
 
                       {/* Título */}
-                      <motion.h4 
+                      <h4 
                         className="text-xl font-bold text-white text-center mb-2 relative z-10"
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: 0.3 }}
                       >
                         {project.title}
-                      </motion.h4>
+                      </h4>
 
                       {/* Subtítulo */}
                       <motion.p 
@@ -1481,13 +1507,11 @@ export default function Home() {
                   </div>
                 )}
                 <div className="p-6 relative z-10">
-                  <motion.h3 
+                  <h3 
                     className="text-xl font-semibold text-slate-900 dark:text-white mb-2"
-                    whileHover={{ color: "#3b82f6" }}
-                    transition={{ duration: 0.3 }}
                   >
                     {project.title}
-                  </motion.h3>
+                  </h3>
                   <p className="text-slate-600 dark:text-slate-300 mb-4 text-sm">
                     {project.description}
                   </p>
@@ -1673,7 +1697,6 @@ export default function Home() {
                 className="bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl shadow-xl p-4 sm:p-6 relative overflow-hidden group ml-8 sm:ml-12 border border-transparent hover:border-purple-200 dark:hover:border-purple-800 transition-all duration-300"
                 variants={cardVariants}
                 whileHover="hover"
-                whileTap="tap"
               >
                 {/* Animated Background Pattern */}
                 <motion.div
@@ -1713,12 +1736,11 @@ export default function Home() {
 
                 {/* Content */}
                 <div className="relative z-10">
-                  <motion.h3 
+                  <h3 
                     className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-2"
-                    whileHover={{ color: "#9333ea" }}
                   >
                     Desenvolvedor Web
-                  </motion.h3>
+                  </h3>
                   <motion.p 
                     className="text-purple-600 dark:text-purple-400 font-semibold mb-1"
                     whileHover={{ color: "#7c3aed" }}
@@ -1841,7 +1863,6 @@ export default function Home() {
                 className="bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl shadow-xl p-4 sm:p-6 relative overflow-hidden group ml-8 sm:ml-12 border border-transparent hover:border-blue-200 dark:hover:border-blue-800 transition-all duration-300"
                 variants={cardVariants}
                 whileHover="hover"
-                whileTap="tap"
               >
                 {/* Animated Background Pattern */}
                 <motion.div
@@ -1881,12 +1902,11 @@ export default function Home() {
 
                 {/* Content */}
                 <div className="relative z-10">
-                  <motion.h3 
+                  <h3 
                     className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-2"
-                    whileHover={{ color: "#3b82f6" }}
                   >
                     Desenvolvedor Full Stack
-                  </motion.h3>
+                  </h3>
                   <motion.p 
                     className="text-blue-600 dark:text-blue-400 font-semibold mb-1"
                     whileHover={{ color: "#1d4ed8" }}
@@ -2009,7 +2029,6 @@ export default function Home() {
                 className="bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl shadow-xl p-4 sm:p-6 relative overflow-hidden group ml-8 sm:ml-12 border-2 border-green-200 dark:border-green-800 hover:border-green-300 dark:hover:border-green-700 transition-all duration-300"
                 variants={cardVariants}
                 whileHover="hover"
-                whileTap="tap"
               >
                 {/* Animated Background Pattern */}
                 <motion.div
@@ -2049,12 +2068,11 @@ export default function Home() {
 
                 {/* Content */}
                 <div className="relative z-10">
-                  <motion.h3 
+                  <h3 
                     className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-2"
-                    whileHover={{ color: "#059669" }}
                   >
                     Em Breve...
-                  </motion.h3>
+                  </h3>
                   <motion.p 
                     className="text-green-600 dark:text-green-400 font-semibold mb-1"
                     whileHover={{ color: "#047857" }}
@@ -2366,7 +2384,13 @@ export default function Home() {
               {selectedProject.images ? (
                 // Projetos com imagens
                 <div className="relative h-96 overflow-hidden rounded-t-2xl">
-                  <ProjectCarousel images={selectedProject.images} title={selectedProject.title} isMobile={isMobile} prefersReducedMotion={!!prefersReducedMotion} />
+                  <ProjectCarousel 
+                    images={selectedProject.images} 
+                    title={selectedProject.title} 
+                    isMobile={isMobile} 
+                    prefersReducedMotion={!!prefersReducedMotion}
+                    enableCarousel
+                  />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
                 </div>
               ) : (
@@ -2479,15 +2503,12 @@ export default function Home() {
 
               {/* Project Content */}
               <div className="p-8">
-                <motion.h2 
+                <h2 
                   id="modal-title"
                   className="text-3xl font-bold text-slate-900 dark:text-white mb-2"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 }}
                 >
                   {selectedProject.title}
-                </motion.h2>
+                </h2>
                 
                 {!selectedProject.images && (
                   <motion.p 
@@ -2556,6 +2577,39 @@ export default function Home() {
                     ))}
                   </div>
                 </motion.div>
+
+                {/* Insights exclusivos do modal */}
+                {getProjectInsights(selectedProject.title).length > 0 && (
+                  <motion.div
+                    className="mb-8"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.55 }}
+                  >
+                    <div className="flex items-center gap-2 mb-3">
+                      <span className="inline-flex h-2 w-2 rounded-full bg-gradient-to-r from-blue-500 to-purple-500"></span>
+                      <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
+                        Destaques do projeto
+                      </h3>
+                    </div>
+                    <div className="grid sm:grid-cols-3 gap-3">
+                      {getProjectInsights(selectedProject.title).map((insight, i) => (
+                        <div
+                          key={`${selectedProject.title}-ins-${i}`}
+                          className="rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 p-3"
+                        >
+                          <div className="text-sm font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2 mb-1">
+                            <span className="text-base select-none">{insight.icon}</span>
+                            {insight.label}
+                          </div>
+                          <p className="text-sm text-slate-600 dark:text-slate-300">
+                            {insight.text}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
 
                 <motion.div 
                   className="flex flex-col sm:flex-row gap-4"
