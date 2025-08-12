@@ -5,7 +5,7 @@ import { FaGithub, FaLinkedin, FaEnvelope, FaCode, FaPalette, FaDatabase, FaServ
 import type { IconType } from "react-icons";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import type { PanInfo } from "framer-motion";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo, memo } from "react";
 
 type Project = {
   title: string;
@@ -843,8 +843,9 @@ export default function Home() {
     };
   }, [isModalOpen, isSkillModalOpen]);
 
-  // Função para animar texto letra por letra
-  const AnimatedText = ({ text, className }: { text: string; className: string }) => {
+  // Função para animar texto letra por letra (memoizada para não reiniciar em re-render)
+  const AnimatedText = memo(({ text, className }: { text: string; className: string }) => {
+    const letters = useMemo(() => text.split(""), [text]);
     return (
       <motion.h2
         className={className}
@@ -853,7 +854,7 @@ export default function Home() {
         whileInView="visible"
         viewport={{ once: true }}
       >
-        {text.split("").map((letter, index) => (
+        {letters.map((letter, index) => (
           <motion.span
             key={index}
             variants={letterVariants}
@@ -865,7 +866,8 @@ export default function Home() {
         ))}
       </motion.h2>
     );
-  };
+  });
+  AnimatedText.displayName = "AnimatedText";
 
   // Função para determinar a altura do container baseada no projeto
   const getImageContainerHeight = () => {
@@ -2146,10 +2148,9 @@ export default function Home() {
       {/* Contact Section */}
       <section id="contact" className="py-16 px-4 sm:px-6 lg:px-8 bg-white dark:bg-slate-900">
         <div className="max-w-4xl mx-auto text-center">
-          <AnimatedText 
-            text="Vamos Trabalhar Juntos"
-            className="text-3xl font-bold text-slate-900 dark:text-white mb-8"
-          />
+          <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-8">
+            Vamos Trabalhar Juntos
+          </h2>
           <motion.p 
             className="text-lg text-slate-600 dark:text-slate-300 mb-8"
             initial={{ opacity: 0, y: 30 }}
