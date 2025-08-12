@@ -478,7 +478,9 @@ export default function Home() {
     update();
     // Detecta plataforma para dica de atalho
     try {
-      const platform = (navigator as any).userAgentData?.platform || navigator.platform || '';
+      type UAData = { platform?: string } | undefined;
+      const nav = navigator as Navigator & { userAgentData?: UAData };
+      const platform = nav.userAgentData?.platform || navigator.platform || '';
       setIsMac(/Mac|iPhone|iPad|iPod/i.test(platform));
     } catch {}
     try {
@@ -508,7 +510,7 @@ export default function Home() {
     return () => document.removeEventListener('keydown', onKeyDown);
   }, [isCommandPaletteOpen]);
 
-  const projects: Project[] = [
+  const projects: Project[] = useMemo(() => ([
     {
       title: "Ludare - Rede Social",
       description: "Aplicativo de rede social desenvolvido com React Native e TypeScript no frontend, C# e .NET no backend, e SQL Server no banco de dados. Responsável por implementação de funcionalidades, otimização de performance e integração de sistemas.",
@@ -575,9 +577,9 @@ export default function Home() {
       live: undefined, // Projeto de IA sem demo
       aiDetailsPath: "/ai/sarna"
     }
-  ];
+  ]), []);
 
-  const skills: Skill[] = [
+  const skills: Skill[] = useMemo(() => ([
     { 
       name: "Frontend", 
       icon: FaCode, 
@@ -598,7 +600,7 @@ export default function Home() {
       icon: FaPalette, 
       items: ["TensorFlow", "Keras", "Transformers", "CNN", "Selenium"] 
     }
-  ];
+  ]), []);
 
   // Variantes de animação
   const containerVariants = {
