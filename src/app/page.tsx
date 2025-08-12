@@ -417,6 +417,51 @@ export default function Home() {
   const closeSkillButtonRef = useRef<HTMLButtonElement>(null);
   const prefersReducedMotion = useReducedMotion();
 
+  // Estado do formulário de contato
+  const [contactName, setContactName] = useState("");
+  const [contactEmail, setContactEmail] = useState("");
+  const [contactMessage, setContactMessage] = useState("");
+  const [contactStatus, setContactStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
+  const [contactError, setContactError] = useState<string | null>(null);
+
+  async function handleContactSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (contactStatus === "sending") return;
+
+    // validações simples
+    const trimmedName = contactName.trim();
+    const trimmedEmail = contactEmail.trim();
+    const trimmedMessage = contactMessage.trim();
+    const emailOk = /.+@.+\..+/.test(trimmedEmail);
+    if (!trimmedName || !emailOk || trimmedMessage.length < 5) {
+      setContactStatus("error");
+      setContactError("Preencha nome, email válido e uma mensagem.");
+      return;
+    }
+
+    try {
+      setContactStatus("sending");
+      setContactError(null);
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: trimmedName, email: trimmedEmail, message: trimmedMessage }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || data?.ok !== true) {
+        throw new Error(data?.error || "Falha ao enviar.");
+      }
+      setContactStatus("success");
+      setContactName("");
+      setContactEmail("");
+      setContactMessage("");
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Erro inesperado";
+      setContactStatus("error");
+      setContactError(message);
+    }
+  }
+
   useEffect(() => {
     setIsClient(true);
     // Força a página a voltar ao topo quando carregada/atualizada
@@ -2115,6 +2160,87 @@ export default function Home() {
             Estou sempre aberto a novas oportunidades e projetos interessantes. 
             Entre em contato comigo!
           </motion.p>
+
+          {/* Formulário de contato curto */}
+          <motion.form
+            onSubmit={handleContactSubmit}
+            className="mx-auto max-w-xl text-left grid grid-cols-1 gap-4 mb-8"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3, duration: 0.6 }}
+            aria-label="Formulário de contato"
+          >
+            <div>
+              <label htmlFor="contact-name" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Nome</label>
+              <input
+                id="contact-name"
+                name="name"
+                type="text"
+                value={contactName}
+                onChange={(e) => setContactName(e.target.value)}
+                className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Seu nome"
+                required
+                minLength={2}
+              />
+            </div>
+            <div>
+              <label htmlFor="contact-email" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Email</label>
+              <input
+                id="contact-email"
+                name="email"
+                type="email"
+                value={contactEmail}
+                onChange={(e) => setContactEmail(e.target.value)}
+                className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="seu@email.com"
+                required
+              />
+            </div>
+            <div>
+              <label htmlFor="contact-message" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Mensagem</label>
+              <textarea
+                id="contact-message"
+                name="message"
+                value={contactMessage}
+                onChange={(e) => setContactMessage(e.target.value)}
+                className="w-full min-h-28 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Como posso ajudar?"
+                required
+                rows={4}
+              />
+            </div>
+            {contactStatus !== "idle" && (
+              <div role="status" className="text-sm">
+                {contactStatus === "sending" && <span className="text-slate-600 dark:text-slate-300">Enviando...</span>}
+                {contactStatus === "success" && <span className="text-emerald-600 dark:text-emerald-400">Mensagem enviada com sucesso!</span>}
+                {contactStatus === "error" && (
+                  <span className="text-rose-600 dark:text-rose-400">{contactError || "Falha ao enviar."}</span>
+                )}
+              </div>
+            )}
+            <div className="flex justify-start">
+              <motion.button
+                type="submit"
+                className="flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 relative overflow-hidden disabled:opacity-60"
+                variants={buttonVariants}
+                whileHover="hover"
+                whileTap="tap"
+                disabled={contactStatus === "sending"}
+                aria-label="Enviar formulário de contato"
+              >
+                <motion.span
+                  className="absolute inset-0 bg-gradient-to-r from-purple-600 to-blue-500 opacity-0"
+                  whileHover={{ opacity: 1 }}
+                  transition={{ duration: 0.3 }}
+                />
+                <FaEnvelope size={20} className="relative z-10" />
+                <span className="relative z-10">Enviar</span>
+              </motion.button>
+            </div>
+          </motion.form>
+
           <motion.div 
             className="flex justify-center space-x-6"
             initial={{ opacity: 0, y: 30 }}
