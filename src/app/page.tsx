@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { FaGithub, FaLinkedin, FaEnvelope, FaCode, FaPalette, FaDatabase, FaServer, FaTimes, FaExternalLinkAlt, FaReact, FaNodeJs, FaPython, FaHtml5, FaCss3Alt, FaJs, FaGitAlt } from "react-icons/fa";
+import { FaGithub, FaLinkedin, FaEnvelope, FaCode, FaPalette, FaDatabase, FaServer, FaTimes, FaExternalLinkAlt, FaReact, FaNodeJs, FaPython, FaHtml5, FaCss3Alt, FaJs, FaGitAlt, FaSearch } from "react-icons/fa";
 import type { IconType } from "react-icons";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import type { PanInfo } from "framer-motion";
@@ -423,6 +423,12 @@ export default function Home() {
   const [contactMessage, setContactMessage] = useState("");
   const [contactStatus, setContactStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
   const [contactError, setContactError] = useState<string | null>(null);
+  // Command Palette
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+  const [commandQuery, setCommandQuery] = useState("");
+  const [commandSelectedIndex, setCommandSelectedIndex] = useState(0);
+  const commandInputRef = useRef<HTMLInputElement>(null);
+  const [isMac, setIsMac] = useState(false);
 
   async function handleContactSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -470,6 +476,11 @@ export default function Home() {
     const mql = window.matchMedia('(max-width: 640px)');
     const update = () => setIsMobile(mql.matches);
     update();
+    // Detecta plataforma para dica de atalho
+    try {
+      const platform = (navigator as any).userAgentData?.platform || navigator.platform || '';
+      setIsMac(/Mac|iPhone|iPad|iPod/i.test(platform));
+    } catch {}
     try {
       mql.addEventListener('change', update);
       return () => mql.removeEventListener('change', update);
@@ -479,6 +490,23 @@ export default function Home() {
       return () => mql.removeListener(update);
     }
   }, []);
+
+  // Atalho global para abrir/fechar a Command Palette
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setIsCommandPaletteOpen((prev) => !prev);
+        setTimeout(() => commandInputRef.current?.focus(), 50);
+        return;
+      }
+      if (e.key === 'Escape' && isCommandPaletteOpen) {
+        setIsCommandPaletteOpen(false);
+      }
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [isCommandPaletteOpen]);
 
   const projects: Project[] = [
     {
@@ -824,12 +852,13 @@ export default function Home() {
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        if (isModalOpen) closeModal();
-        if (isSkillModalOpen) closeSkillModal();
+        if (isCommandPaletteOpen) setIsCommandPaletteOpen(false);
+        else if (isModalOpen) closeModal();
+        else if (isSkillModalOpen) closeSkillModal();
       }
     };
 
-    const anyModalOpen = isModalOpen || isSkillModalOpen;
+    const anyModalOpen = isModalOpen || isSkillModalOpen || isCommandPaletteOpen;
     if (anyModalOpen) {
       document.addEventListener('keydown', handleEscape);
       document.body.style.overflow = 'hidden';
@@ -841,7 +870,7 @@ export default function Home() {
       document.removeEventListener('keydown', handleEscape);
       document.body.style.overflow = 'unset';
     };
-  }, [isModalOpen, isSkillModalOpen]);
+  }, [isModalOpen, isSkillModalOpen, isCommandPaletteOpen]);
 
   // Função para animar texto letra por letra (memoizada para não reiniciar em re-render)
   const AnimatedText = memo(({ text, className }: { text: string; className: string }) => {
@@ -942,6 +971,46 @@ export default function Home() {
     // Usa somente imagens que sabemos existir sob /public
     return project.images?.[0] ?? null;
   };
+
+  // Itens de busca da Command Palette
+  const commandItems = useMemo(() => {
+    const base: Array<{ type: 'section' | 'project' | 'skill'; label: string; action: () => void; keywords: string }> = [];
+    // Seções
+    base.push(
+      { type: 'section', label: 'Ir para Início', action: () => document.querySelector('#home')?.scrollIntoView({ behavior: 'smooth' }), keywords: 'inicio home topo' },
+      { type: 'section', label: 'Ir para Sobre', action: () => document.querySelector('#about')?.scrollIntoView({ behavior: 'smooth' }), keywords: 'sobre about' },
+      { type: 'section', label: 'Ir para Projetos', action: () => document.querySelector('#projects')?.scrollIntoView({ behavior: 'smooth' }), keywords: 'projetos projects' },
+      { type: 'section', label: 'Ir para Experiência', action: () => document.querySelector('#experience')?.scrollIntoView({ behavior: 'smooth' }), keywords: 'experiencia experience' },
+      { type: 'section', label: 'Ir para Contato', action: () => document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' }), keywords: 'contato contact email' },
+    );
+    // Projetos
+    projects.forEach((p) => {
+      base.push({
+        type: 'project',
+        label: `Abrir: ${p.title}`,
+        action: () => openModal(p),
+        keywords: `${p.title} ${p.tech.join(' ')} ${p.description}`,
+      });
+    });
+    // Skills
+    skills.forEach((s) => {
+      base.push({
+        type: 'skill',
+        label: `Skill: ${s.name}`,
+        action: () => openSkillModal(s),
+        keywords: `${s.name} ${s.items.join(' ')}`,
+      });
+    });
+    return base;
+  }, [projects, skills]);
+
+  const filteredCommands = useMemo(() => {
+    const q = commandQuery.trim().toLowerCase();
+    if (!q) return commandItems;
+    return commandItems.filter((item) =>
+      item.label.toLowerCase().includes(q) || item.keywords.toLowerCase().includes(q)
+    );
+  }, [commandItems, commandQuery]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
@@ -1098,6 +1167,16 @@ export default function Home() {
                 />
                 <span className="relative z-10">Contato</span>
               </motion.a>
+            </motion.div>
+            {/* Hint de atalho para Command Palette */}
+            <motion.div
+              className="mt-6 flex items-center justify-center gap-2 text-slate-500 dark:text-slate-400 text-sm"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.1 }}
+            >
+              <FaSearch className="opacity-70" />
+              <span>Pressione {isMac ? '⌘K' : 'Ctrl+K'} para buscar projetos, seções e skills</span>
             </motion.div>
           </motion.div>
         </div>
@@ -2297,6 +2376,118 @@ export default function Home() {
           </p>
         </div>
       </motion.footer>
+
+      {/* Botão flutuante para abrir a Command Palette no mobile */}
+      <motion.button
+        className="fixed bottom-6 right-6 z-[55] md:hidden rounded-full p-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-xl ring-1 ring-white/20"
+        onClick={() => { setIsCommandPaletteOpen(true); setTimeout(() => commandInputRef.current?.focus(), 50); }}
+        whileHover={{ scale: 1.06 }}
+        whileTap={{ scale: 0.94 }}
+        aria-label="Abrir busca"
+      >
+        <FaSearch size={20} />
+      </motion.button>
+
+      {/* Command Palette */}
+      <AnimatePresence>
+        {isCommandPaletteOpen && (
+          <>
+            <motion.div
+              className={`fixed inset-0 z-[60] ${isMobile ? '' : 'backdrop-blur-sm'} bg-black/50`}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsCommandPaletteOpen(false)}
+              aria-hidden
+            />
+            <motion.div
+              className="fixed inset-0 z-[70] flex items-start sm:items-center justify-center p-4"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              role="dialog"
+              aria-modal="true"
+              aria-label="Command Palette"
+            >
+              <motion.div
+                className="w-full max-w-2xl rounded-2xl bg-white dark:bg-slate-900 shadow-2xl ring-1 ring-slate-200/70 dark:ring-slate-700/60 overflow-hidden"
+                initial={{ y: -20, opacity: 0, scale: 0.98 }}
+                animate={{ y: 0, opacity: 1, scale: 1 }}
+                exit={{ y: -10, opacity: 0, scale: 0.98 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 26 }}
+              >
+                <div className="flex items-center gap-2 px-4 py-3 border-b border-slate-200 dark:border-slate-700">
+                  <FaSearch className="text-slate-500" />
+                  <input
+                    ref={commandInputRef}
+                    value={commandQuery}
+                    onChange={(e) => { setCommandQuery(e.target.value); setCommandSelectedIndex(0); }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'ArrowDown') {
+                        e.preventDefault();
+                        setCommandSelectedIndex((prev) => Math.min(prev + 1, Math.max(0, filteredCommands.length - 1)));
+                      } else if (e.key === 'ArrowUp') {
+                        e.preventDefault();
+                        setCommandSelectedIndex((prev) => Math.max(prev - 1, 0));
+                      } else if (e.key === 'Enter') {
+                        e.preventDefault();
+                        const chosen = filteredCommands[commandSelectedIndex];
+                        if (chosen) {
+                          setIsCommandPaletteOpen(false);
+                          setTimeout(() => {
+                            chosen.action();
+                          }, 50);
+                        }
+                      } else if (e.key === 'Escape') {
+                        setIsCommandPaletteOpen(false);
+                      }
+                    }}
+                    placeholder="Buscar: projetos, seções, skills..."
+                    className="w-full bg-transparent outline-none text-slate-900 dark:text-white placeholder-slate-400"
+                    aria-label="Campo de busca da command palette"
+                    autoFocus
+                  />
+                  <button
+                    onClick={() => setIsCommandPaletteOpen(false)}
+                    className="ml-2 rounded-md px-2 py-1 text-xs text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+                    aria-label="Fechar command palette"
+                  >
+                    Esc
+                  </button>
+                </div>
+                <div className="max-h-80 overflow-auto">
+                  {filteredCommands.length === 0 ? (
+                    <div className="px-4 py-6 text-center text-slate-500 dark:text-slate-400">Sem resultados</div>
+                  ) : (
+                    <ul role="listbox" aria-label="Resultados">
+                      {filteredCommands.map((item, idx) => (
+                        <li
+                          key={`${item.type}-${item.label}`}
+                          role="option"
+                          aria-selected={idx === commandSelectedIndex}
+                          className={`px-4 py-3 cursor-pointer flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 ${idx === commandSelectedIndex ? 'bg-slate-100 dark:bg-slate-800' : ''}`}
+                          onMouseEnter={() => setCommandSelectedIndex(idx)}
+                          onClick={() => {
+                            setIsCommandPaletteOpen(false);
+                            setTimeout(() => item.action(), 50);
+                          }}
+                        >
+                          <span className={`text-xs px-2 py-0.5 rounded-full ${item.type === 'section' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200' : item.type === 'project' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-200' : 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-200'}`}>{item.type}</span>
+                          <span className="text-slate-800 dark:text-slate-100">{item.label}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+                <div className="flex items-center justify-between px-4 py-2 text-[11px] text-slate-500 dark:text-slate-400">
+                  <span>Dica: {isMac ? '⌘K' : 'Ctrl+K'} abre a busca</span>
+                  <span>↑↓ navegar • Enter selecionar • Esc fechar</span>
+                </div>
+              </motion.div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
       {/* Modal */}
       <AnimatePresence>
